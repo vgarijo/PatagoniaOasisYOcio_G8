@@ -92,6 +92,7 @@ def menu_reservas(archivo_clientes, archivo_empleados, archivo_gerentes):
         menu_historial_reservas()
     elif rta == 2:
         # método para hacer una nueva reserva en cliente y agregarlo a un archivo de reservas
+        pass
     elif rta == 3:
         menu_cliente(archivo_clientes, archivo_empleados, archivo_gerentes)
     else:
@@ -112,6 +113,7 @@ def menu_historial_reservas(archivo_clientes, archivo_empleados, archivo_gerente
         menu_reserva_actual()
     elif rta == 2:
         # método para ver historial de reservas
+        pass
     elif rta == 3:
         menu_reservas(archivo_clientes, archivo_empleados, archivo_gerentes)
     else:
@@ -132,15 +134,25 @@ def menu_reserva_actual(archivo_clientes, archivo_empleados, archivo_gerentes):
     print("7. Salir")
     rta = validar_respuesta_menu(7)
     if rta == 1:
+        print("")
         # método para ver reserva actual
+        pass
     elif rta == 2:
+        print("")
         # método para modificar reserva actual
+        pass
     elif rta == 3:
+        print("")
         # método para cancelar reserva actual
+        pass
     elif rta == 4:
+        print("")
         # método para hacer check in
+        pass
     elif rta == 5:
+        print("")
         # método para hacer check out
+        pass
     elif rta == 6:
         menu_historial_reservas(archivo_clientes, archivo_empleados, archivo_gerentes)
     else:
@@ -159,8 +171,10 @@ def menu_consumos(archivo_clientes, archivo_empleados, archivo_gerentes):
     rta = validar_respuesta_menu(4)
     if rta == 1:
         # método para visualizar historial de consumos
+        pass
     elif rta == 2:
         # método para hacer un nuevo consumo
+        pass
     elif rta == 3:
         menu_cliente(archivo_clientes, archivo_empleados, archivo_gerentes)
     else:
@@ -179,8 +193,10 @@ def menu_datos_personales(archivo_clientes, archivo_empleados, archivo_gerentes)
     rta = validar_respuesta_menu(4)
     if rta == 1:
         # método para ver datos personales
+        pass
     elif rta == 2:
         # método para modificar datos personales
+        pass
     elif rta == 3:
         menu_cliente(archivo_clientes, archivo_empleados, archivo_gerentes)
     else:
@@ -197,16 +213,7 @@ def menu_gerente(archivo_clientes, archivo_empleados, archivo_gerentes):
     print("")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+archivo_clientes = "clientes.txt"
+archivo_empleados = "empleados.txt"
+archivo_gerentes = "gerentes.txt"
+menuPOO(archivo_clientes, archivo_empleados, archivo_gerentes)
