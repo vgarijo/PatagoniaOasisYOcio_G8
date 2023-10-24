@@ -172,6 +172,7 @@ def menu_reserva_actual():
 
     print("")
 
+# Menu consumos
 def menu_consumos():
     print("Consumos")
     print("¿Qué desea hacer?")
@@ -194,6 +195,7 @@ def menu_consumos():
 
     print("")
 
+# Menu datos personales
 def menu_datos_personales():
     print("Personales")
     print("¿Qué desea hacer?")
@@ -216,12 +218,129 @@ def menu_datos_personales():
 
     print("")
 
-
+# Menu empleado
 def menu_empleado():
-    print("")
+    print("Bienvenido al menu de empleado")
+    print("¿Qué desea hacer?")
+    print("1. Ingreso")
+    print("2. Egreso")
+    print("3. Datos Personales")
+    print("4. Volver atras")
+    print("5. Salir")
+    rta = validar_respuesta_menu(5)
+    if rta == 1:
+        print("Ingreso efectuado")
+    if rta == 2:
+        print("Egreso efectuado")
+    if rta == 3:
+        menu_datos_personales()
+    if rta == 4:
+        menuPOO()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
 
+# Menu gerente
 def menu_gerente():
-    print("")
+    print("Bienvenido al menu de gerente")
+    print("¿Qué desea hacer?")
+    print("1. Ingreso")
+    print("2. Egreso")
+    print("3. Datos Personales")
+    print("4. Administración de personal")
+    print("5. Estadísticas")
+    print("6. Volver atras")
+    print("7. Salir")
+    rta = validar_respuesta_menu(7)
+    if rta == 1:
+        print("Ingreso efectuado")
+    if rta == 2:
+        print("Egreso efectuado")
+    if rta == 3:
+        menu_datos_personales()
+    if rta == 4:
+        menu_administracion_personal()
+    if rta == 5:
+        menu_estadisticas()
+    if rta == 6:
+        menuPOO()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
 
+# Menu administracion de personal
+def menu_administracion_personal():
+    print("Bienvenido al menu de administración de personal")
+    print("¿Qué desea hacer?")
+    print("1. Ver empleados")
+    print("2. Agregar empleado")
+    print("3. Modificar empleado")
+    print("4. Eliminar empleado")
+    print("5. Volver atras")
+    print("6. Salir")
+    rta = validar_respuesta_menu(6)
+    if rta == 1:
+        # método para ver empleados
+        pass
+    if rta == 2:
+        # método para agregar empleado
+        pass
+    if rta == 3:
+        # método para modificar empleado
+        pass
+    if rta == 4:
+        # método para eliminar empleado
+        pass
+    if rta == 5:
+        menu_gerente()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
 
+# Menu estadisticas
+def menu_estadisticas():
+    print("Bienvenido al menu de estadísticas")
+    print("¿Qué desea hacer?")
+    print("1. Ver porcentajes de ocupación")
+    print("2. Ver porcentajes de ocupación por tipo de habitación")
+    print("3. Cantidad de clientes por tipo")
+    print("4. Recaudación diaria")
+    print("5. Volver atras")
+    print("6. Salir")
+    rta = validar_respuesta_menu(6)
+    if rta == 1:
+        # método para ver porcentajes de ocupación
+        pass
+    if rta == 2:
+        # método para ver porcentajes de ocupación por tipo de habitación
+        pass
+    if rta == 3:
+        # método para ver cantidad de clientes por tipo
+        pass
+    if rta == 4:
+        recaudacion_diaria()
+    if rta == 5:
+        menu_gerente()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
+
+def recaudacion_diaria():
+    print("Ver recaudación diaria de:")
+    print("1. Hoy")
+    print("2. Seleccionar una fecha")
+    print("3. Volver atras")
+    print("4. Salir")
+    rta = validar_respuesta_menu(4)
+    if rta == 1:
+        # método para ver recaudación diaria de hoy
+        pass
+    if rta == 2:
+        # método para ver recaudación diaria de una fecha
+        pass
+    if rta == 3:
+        menu_estadisticas()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
 menuPOO()
