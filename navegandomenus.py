@@ -1,8 +1,96 @@
-def pedirUsuario():
-    usuario = input("Ingrese su usuario: ")
+class Persona:
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):
+        self.nombre = nombre
+        self.apellido = apellido
+        self.DNI = DNI
+        self.mail = mail
+        self.password = password
+        self.fec_nac = fec_nac
+
+    def modificar_datos_personales(self):
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Apellido")
+        print("3. DNI")
+        print("4. Mail")
+        print("5. Fecha de nacimiento")
+        print("6. Volver atras")
+        print("7. Salir")
+        rta=validar_respuesta_menu(7)
+        if rta == 1:
+            self.nombre=input("Ingrese su nuevo nombre: ")
+        elif rta == 2:
+            self.apellido=input("Ingrese su nuevo apellido: ")
+        elif rta == 3:
+            self.DNI = validar_dni()
+        elif rta == 4:
+            self.mail = validar_mail()
+        elif rta == 5:
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+
+    def cambiar_password(self):
+        act = input("Ingrese su contraseña actual: ")
+        while act != self.password:
+            print("Contraseña incorrecta")
+            act = input("Ingrese su contraseña actual. Presione 0 para salir: ")
+            if act == "0":
+                break
+        nueva = input("Ingrese su nueva contraseña: ")
+        self.password = nueva
+
+class Cliente(Persona):
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, reservas, consumos, tipo):
+        super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
+        self.reservas = reservas
+        self.consumos = consumos
+        self.tipo = tipo
+
+class Empleado(Persona):
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
+        super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
+        self.area = area
+        self.activo = activo
+
+class Gerente(Empleado):
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
+        super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
+
+class Reserva():
+    def __init__(self, cliente, habitacion, fecha_ing, fecha_egr, numero_res, cant_personas):
+        self.cliente = cliente
+        self.habitacion = habitacion
+        self.fecha_ing = fecha_ing
+        self.fecha_egr = fecha_egr
+        self.numero_res = numero_res
+        self.cant_personas = cant_personas
+
+
+def validar_dni():
+    # El DNI es un número de 7 u 8 cifras
+    dni = input("Ingrese su DNI: ")
+    while not dni.isdigit() or len(dni) < 7 or len(dni) > 8:
+        dni = input("DNI no válido, ingrese otro: ")
+    return dni
+
+def validar_mail():
+    # El mail debe contener un @ y un .
+    mail = input("Ingrese su mail: ")
+    while not "@" in mail or not "." in mail:
+        mail = input("Mail no válido, ingrese otro: ")
+    return mail
+
+def validar_fec(mensaje):
+    # La fecha debe tener el formato dd/mm/aaaa
+    fecha = input(mensaje)
+    while not "/" in fecha or len(fecha) != 10:
+        fecha = input("Fecha no válida, ingrese otra: ")
+    return fecha
+
+def ingreso_usuario():
+    mail = input("Ingrese su mail: ")
     contrasena = input("Ingrese su contraseña: ")
     print("")
-    return usuario, contrasena
+    return mail, contrasena
 
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
@@ -12,6 +100,9 @@ def validar_respuesta_menu(rta):
     print("")
     return rta
 
+from csvtomatriz import *
+
+# Menu principal
 def menuPOO():
     print("Bienvenido al Hotel Patagonia Oasis y Ocio.")
     print("¿A qué menu desea ingresar?")
@@ -21,13 +112,15 @@ def menuPOO():
     print("4. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        usuario,contrasena=pedirUsuario()
+        matriz=csvtomatriz("clientes.csv")
+        # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
+        
         menu_cliente()
     elif rta == 2:
-        usuario,contrasena=pedirUsuario()
+        mail,contrasena=ingreso_usuario()
         menu_empleado()
     elif rta == 3:
-        usuario,contrasena=pedirUsuario()
+        mail,contrasena=ingreso_usuario()
         menu_gerente()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -201,8 +294,9 @@ def menu_datos_personales():
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
     print("2. Modificar Datos Personales")
-    print("3. Volver atras")
-    print("4. Salir")
+    print("3. Cambiar Contraseña")
+    print("4. Volver atras")
+    print("5. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
         # método para ver datos personales
@@ -211,6 +305,9 @@ def menu_datos_personales():
         # método para modificar datos personales
         pass
     elif rta == 3:
+        # método para cambiar contraseña
+        pass
+    elif rta == 4:
         menu_cliente()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -343,4 +440,6 @@ def recaudacion_diaria():
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
+
+
 menuPOO()
