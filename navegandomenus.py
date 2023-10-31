@@ -38,11 +38,11 @@ class Persona:
         nueva = input("Ingrese su nueva contraseña: ")
         self.password = nueva
 
-class Cliente(Persona): 
+class Cliente(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, reservas, consumos, tipo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
-        self.reservas = reservas #lista_enlazada
-        self.consumos = consumos 
+        self.reservas = reservas
+        self.consumos = consumos
         self.tipo = tipo
 
 class Empleado(Persona):
@@ -56,10 +56,9 @@ class Gerente(Empleado):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
 
 class Reserva():
-    def __init__(self, cliente, habitacion, fecha_reserva, fecha_ing, fecha_egr, numero_res, cant_personas):
+    def __init__(self, cliente, habitacion, fecha_ing, fecha_egr, numero_res, cant_personas):
         self.cliente = cliente
         self.habitacion = habitacion
-        self.fecha_reserva=fecha_reserva
         self.fecha_ing = fecha_ing
         self.fecha_egr = fecha_egr
         self.numero_res = numero_res
@@ -88,10 +87,13 @@ def validar_fec(mensaje):
     return fecha
 
 def ingreso_usuario():
-    mail = input("Ingrese su mail: ")
-    contrasena = input("Ingrese su contraseña: ")
-    print("")
-    return mail, contrasena
+    mail = input("Ingrese su mail. Presione 0 para volver: ")
+    if mail == "0":
+        menuPOO()
+    else:
+        contrasena = input("Ingrese su contraseña: ")
+        print("")
+        return mail, contrasena
 
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
@@ -101,7 +103,8 @@ def validar_respuesta_menu(rta):
     print("")
     return rta
 
-from csvtomatriz import *
+from csvtomatriz import csvtomatriz
+#from csvtomatriz import matriztocsv
 
 # Menu principal
 def menuPOO():
@@ -115,7 +118,18 @@ def menuPOO():
     if rta == 1:
         matriz=csvtomatriz("clientes.csv")
         # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
-        
+        mail,contrasena=ingreso_usuario()
+        for i in range(len(matriz)):
+            if mail == matriz[i][3]:
+                if contrasena == matriz[i][4]:
+                    print("Ingreso exitoso")
+                    pass
+                else:
+                    print("Contraseña incorrecta")
+                    mail,contrasena=ingreso_usuario()
+            else:
+                print("Mail no registrado")
+                mail,contrasena=ingreso_usuario()
         menu_cliente()
     elif rta == 2:
         mail,contrasena=ingreso_usuario()
