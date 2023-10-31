@@ -123,6 +123,7 @@ def menuPOO():
             if mail == matriz[i][3]:
                 if contrasena == matriz[i][4]:
                     print("Ingreso exitoso")
+                    cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5], matriz[i][6], matriz[i][7], matriz[i][8])
                     pass
                 else:
                     print("Contraseña incorrecta")
@@ -130,7 +131,7 @@ def menuPOO():
             else:
                 print("Mail no registrado")
                 mail,contrasena=ingreso_usuario()
-        menu_cliente()
+        menu_cliente(cliente)
     elif rta == 2:
         mail,contrasena=ingreso_usuario()
         menu_empleado()
@@ -142,7 +143,7 @@ def menuPOO():
         exit()
 
 # Menu cliente
-def menu_cliente(): 
+def menu_cliente(cliente): 
     print("Bienvenido al menu de cliente")
     print("¿Qué desea hacer?")
     print("1. Mis Reservas")
@@ -152,11 +153,11 @@ def menu_cliente():
     print("5. Salir")
     rta = validar_respuesta_menu(5)
     if rta == 1:
-        menu_reservas()
+        menu_reservas(cliente)
     elif rta == 2:
-        menu_consumos()
+        menu_consumos(cliente)
     elif rta == 3:
-        menu_datos_personales()
+        menu_datos_personales(cliente)
     elif rta == 4:
         menuPOO()
     else:
