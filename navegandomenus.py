@@ -38,11 +38,11 @@ class Persona:
         nueva = input("Ingrese su nueva contraseña: ")
         self.password = nueva
 
-class Cliente(Persona):
+class Cliente(Persona): 
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, reservas, consumos, tipo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
-        self.reservas = reservas
-        self.consumos = consumos
+        self.reservas = reservas #lista_enlazada
+        self.consumos = consumos 
         self.tipo = tipo
 
 class Empleado(Persona):
@@ -56,9 +56,10 @@ class Gerente(Empleado):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
 
 class Reserva():
-    def __init__(self, cliente, habitacion, fecha_ing, fecha_egr, numero_res, cant_personas):
+    def __init__(self, cliente, habitacion, fecha_reserva, fecha_ing, fecha_egr, numero_res, cant_personas):
         self.cliente = cliente
         self.habitacion = habitacion
+        self.fecha_reserva=fecha_reserva
         self.fecha_ing = fecha_ing
         self.fecha_egr = fecha_egr
         self.numero_res = numero_res
