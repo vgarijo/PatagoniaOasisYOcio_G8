@@ -6,8 +6,8 @@ def validar_reserva(lista_reservas):
     dNi=int(input("Ingrese su DNI (solo numeros, sin puntos): "))
     numero_reserva=int(input("Ingrese el numero de reserva que desee modificar: "))
     for i in range(len(lista_reservas)):
-        if lista_reservas[i][0]==dNi and lista_reservas[i][4]==numero_reserva:
-            return numero_reserva
+        if lista_reservas[i][0]==dNi and lista_reservas[i][4]==numero_reserva: ## no sé si se puede recorrer así, porque estamos usando lista_reservas como una lista enlazada
+            return lista_reservas[i] 
     return "No existe dicha reserva."  ## buscar una forma de volver al menu de reservas
 
 
@@ -40,16 +40,17 @@ def modificar(self, numero): ### este es el metodo de reservas, después hago el
             menu_reservas()
 
     
-def modificar_reserva(self, lista_reservas):
-    numero_deReserva=validar_reserva(lista_reservas)
-    
+def modificar_reserva(self, lista_reservas):  # método que va en cliente
+    reserva=validar_reserva(lista_reservas) ## CHECKEAR ESTO
+    reserva.modificar()
 
-
-
+    #ver cómo hacerlo
 
 
 
 def checkIn(self):
     pass
+
+
 def checkOut(self):
     pass
