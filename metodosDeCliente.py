@@ -24,21 +24,29 @@ def nueva_reserva(self, cant_personas, habitacion, lista_reservas): #cliente, ha
     lista_reservas.append(reservaNueva)
 
 
-def modificar(self): ### este es el metodo de reservas, después hago el de cliente
-    print("¿Qué desea modificar?","\n"+"1. Habitacion"+"\n"+"2. Cantidad de Personas"+"\n"+"3. Fecha de Inicio de la Reserva"+"\n"+"4. Fecha de Fin de la Reserva"+"\n"+"5. Volver")
-    rta = validar_respuesta_menu(5)
-    if rta == 1: #modificar habitacion
-        self.habitacion=int(input("Ingrese el nuevo número de habitacion: "))
-    elif rta == 2: #modificar cant de personas
-        self.cant_personas=int(input("Ingrese el nuevo número de habitacion: ")) # falta checkear que no exceda la cantidad de personas permitidas en la habitación
-    elif rta == 3: #modificar fecha de comienzo de reserva
-        self.fecha_ing=validar_fec()
-    elif rta == 4: #modificar fecha de salida
-        self.fecha_egr=validar_fec()
-    else:
-        menu_reservas()
+def modificar(self, numero): ### este es el metodo de reservas, después hago el de cliente
+    if self.numero==numero:
+        print("¿Qué desea modificar?","\n"+"1. Habitacion"+"\n"+"2. Cantidad de Personas"+"\n"+"3. Fecha de Inicio de la Reserva"+"\n"+"4. Fecha de Fin de la Reserva"+"\n"+"5. Volver")
+        rta = validar_respuesta_menu(5)
+        if rta == 1: #modificar habitacion
+            self.habitacion=int(input("Ingrese el nuevo número de habitacion: "))
+        elif rta == 2: #modificar cant de personas
+            self.cant_personas=int(input("Ingrese el nuevo número de habitacion: ")) # falta checkear que no exceda la cantidad de personas permitidas en la habitación
+        elif rta == 3: #modificar fecha de comienzo de reserva
+            self.fecha_ing=validar_fec()
+        elif rta == 4: #modificar fecha de salida
+            self.fecha_egr=validar_fec()
+        else:
+            menu_reservas()
 
     
+def modificar_reserva(self, lista_reservas):
+    numero_deReserva=validar_reserva(lista_reservas)
+    
+
+
+
+
 
 
 def checkIn(self):
