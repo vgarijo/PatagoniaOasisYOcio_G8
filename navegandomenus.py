@@ -13,7 +13,7 @@ class Persona:
         self.fec_nac = fec_nac
 
     def __str__(self):
-        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}"
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}"
 
 
     def modificar_datos_personales(self):
@@ -66,7 +66,7 @@ class Cliente(Persona):
                 self.consumos.append(Consumo(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4]))
     
     def __str__(self) -> str:
-        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
 
     def modificar_reserva(self, reserva): ### este es el metodo de reservas, después hago el de cliente
         while True:
@@ -121,6 +121,9 @@ class Empleado(Persona):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
         self.area = area
         self.activo = activo
+    def __str__(self):
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
+
 
 class Gerente(Empleado):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
@@ -360,14 +363,14 @@ class Lista_Enlazada(): # Lista enlazada
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
-    dni = input("Ingrese su DNI: ")
+    dni = input("Ingrese DNI: ")
     while not dni.isdigit() or len(dni) < 7 or len(dni) > 8:
         dni = input("DNI no válido, ingrese otro: ")
     return dni
 
 def validar_mail():
     # El mail debe contener un @ y un .
-    mail = input("Ingrese su mail: ")
+    mail = input("Ingrese dirección de mail: ")
     while not "@" in mail or not "." in mail:
         mail = input("Mail no válido, ingrese otro: ")
     return mail
@@ -390,24 +393,40 @@ def validar_respuesta_menu(rta):
     return int(rta)
 
 def csvtomatriz(archivo):
-    with open(archivo) as csvfile:
-        reader = csv.reader(csvfile, delimiter=';')
-        matriz = []
-        for row in reader:
-            matriz.append(row)
-    return matriz[1:]
+    try:
+        with open(archivo) as csvfile:
+            reader = csv.reader(csvfile, delimiter=';')
+            matriz = []
+            for row in reader:
+                matriz.append(row)
+        return matriz[1:]
+    except IOError:
+        print("No se encontró el archivo.")
 
-def matriztocsv(archivo, matriz):
-    with open(archivo, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=';')
-        writer.writerow(["Numero de reserva", "DNI del cliente", "Habitacion", "Fecha de ingreso", "Fecha de egreso", "Cantidad de personas"])
-        for i in range(len(matriz)):
-            writer.writerow(matriz[i])
+def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una reserva "R" o un nuevo empleado "E"
+    if tipo=="R":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Numero de reserva", "DNI del cliente", "Habitacion", "Fecha de ingreso", "Fecha de egreso", "Cantidad de personas"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
+    elif tipo=="E":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Area", "Estado"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
 
 def strtodatime(fecha):
     fecha = fecha.split("/")
     fecha = dt.datetime(int(fecha[2]), int(fecha[1]), int(fecha[0]))
     return fecha
+
+def stringAempleado(matriz):
+    lista_empleados=[]
+    for i in range(len(matriz)):
+        lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
+    return lista_empleados
 
 # Menu principal
 def menuPOO():
@@ -705,9 +724,14 @@ def menu_administracion_personal():
     print("5. Volver atras")
     print("6. Salir")
     rta = validar_respuesta_menu(6)
+    matriz_empleados=csvtomatriz("empleados.csv")
+    lista_empleados=stringAempleado(matriz_empleados)
     if rta == 1:
-        # método para ver empleados
-        pass
+        # ver empleados
+        for i in range(lista_empleados):
+            print(lista_empleados[i])
+            print('\n')
+        
     if rta == 2:
         # método para agregar empleado
         pass

@@ -1,3 +1,6 @@
+from navegandomenus import*
+
+
 '''
 def menu_datos_personales(persona):
     print("Personales")
@@ -47,7 +50,7 @@ def __str__(self):
 
 
 
-'''
+
 def menu_administracion_personal():
     print("Bienvenido al menu de administración de personal")
     print("¿Qué desea hacer?")
@@ -58,11 +61,28 @@ def menu_administracion_personal():
     print("5. Volver atras")
     print("6. Salir")
     rta = validar_respuesta_menu(6)
+    matriz_empleados=csvtomatriz("empleados.csv")
+    lista_empleados=stringAempleado(matriz_empleados)
     if rta == 1:
         # método para ver empleados
         pass
     if rta == 2:
         # método para agregar empleado
+
+        print('Ingrese los datos del nuevo empleado:')
+        print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
+        nombre=input("Nombre del empleado: ")
+        apellido=input("Apellido del empleado: ")
+        dni=validar_dni()
+        mail=validar_mail()
+        password=input("Constraseña del empleado: ")
+        print("Ingrese fecha de nacimiento: ")
+        fecha_nac=validar_fec("")
+        area=input("Área del empleado: ")
+        activo=input("Área del empleado (Activo o No activo): ")
+        matriz_empleados.append([nombre,apellido,dni,mail,password,fecha_nac,area,activo])
+        matriztocsv("empleados.csv",matriz_empleados,"E")
+
         pass
     if rta == 3:
         # método para modificar empleado
@@ -75,14 +95,42 @@ def menu_administracion_personal():
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
+
+
+
+# hago una función para pasar todos los empleados de la matriz a que sean de clase empleado
+'''
+def stringAempleado(matriz):
+    lista_empleados=[]
+    for i in range(len(matriz)):
+        lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
+    return lista_empleados
 '''
 
+# método para ver a los empleados
 
+'''
+for i in range(lista_empleados):
+    print(lista_empleados[i])
+    print('\n')
+'''
 
+# método para agregar empleado
 
-
-
-
+'''
+print('Ingrese los datos del nuevo empleado:')
+print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
+nombre=input("Nombre del empleado: ")
+apellido=input("Apellido del empleado: ")
+dni=validar_dni()
+mail=validar_mail()
+password=input("Constraseña del empleado: ")
+print("Ingrese fecha de nacimiento: ")
+fecha_nac=validar_fec("")
+area=input("Área del empleado: ")
+activo=input("Área del empleado (Activo o No activo): ")
+matriz_empleados.
+'''
 
 
 
