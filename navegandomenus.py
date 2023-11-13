@@ -58,36 +58,36 @@ class Cliente(Persona):
         print("7. Salir")
         rta=validar_respuesta_menu(7)
         
-        matriz = csvtomatriz("clientes.csv")
+        matriz_cliente = csvtomatriz("clientes.csv")
 
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
-            for i in range(len(matriz)):
-                if self.DNI == matriz[i][2]:
-                    matriz[i][0] = self.nombre
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
-            for i in range(len(matriz)):
-                if self.DNI == matriz[i][2]:
-                    matriz[i][1] = self.apellido
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][1] = self.apellido
         elif rta == 3:
             self.mail = validar_mail()
-            for i in range(len(matriz)):
-                if self.DNI == matriz[i][2]:
-                    matriz[i][3] = self.mail
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][3] = self.mail
         elif rta == 4:
             password=self.cambiar_password()
-            for i in range(len(matriz)):
-                if self.DNI == matriz[i][2]:
-                    matriz[i][4] = password
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][4] = password
         elif rta == 5:
             self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
-            for i in range(len(matriz)):
-                if self.DNI == matriz[i][2]:
-                    matriz[i][5] = self.fec_nac            
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][5] = self.fec_nac            
         
         if rta < 6:
-            matriztocsv("clientes.csv", matriz,"Cl")
+            matriztocsv("clientes.csv", matriz_cliente,"Cl")
             print("Modificación realizada.")
             print("")
             self.modificar_datos_personales()
@@ -640,32 +640,45 @@ class Empleado(Persona):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Area")
-        print("8. Estado")
-        print("9. Volver atras")
-        print("10. Salir")
-        rta=validar_respuesta_menu(10)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Volver atras")
+        print("7. Salir")
+        rta=validar_respuesta_menu(7)
+        matriz_empleados = csvtomatriz("empleados.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
-        elif rta == 6:
-            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
-        elif rta == 7:
-            self.area = input("Ingrese su nueva area: ")
-        elif rta == 8:
-            self.activo = input("Ingrese su nuevo estado: ")
-        elif rta == 9: 
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][5] = self.fec_nac
+        if rta < 6:
+            matriztocsv("empleados.csv", matriz_empleados,"E")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        elif rta == 6: 
             menu_empleado()
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -679,36 +692,126 @@ class Gerente(Empleado):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Area")
-        print("8. Estado")
-        print("9. Volver atras")
-        print("10. Salir")
-        rta=validar_respuesta_menu(10)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Area")
+        print("7. Estado")
+        print("8. Volver atras")
+        print("9. Salir")
+        rta=validar_respuesta_menu(9)
+        matriz_empleados = csvtomatriz("empleados.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][5] = self.fec_nac
         elif rta == 6:
-            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
+            self.area=input("Ingrese su nueva area de trabajo: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][6] = self.area
         elif rta == 7:
-            self.area = input("Ingrese su nueva area: ")
-        elif rta == 8:
-            self.activo = input("Ingrese su nuevo estado: ")
-        elif rta == 9: 
-            menu_gerente()
+            self.activo=input("Ingrese su nuevo status: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.activo
+        
+        if rta < 8:
+            matriztocsv("empleados.csv", matriz_empleados,"E")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        
+        elif rta == 8: 
+            menu_gerente(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
+
+        def modificarEmpleado(self,empleado):
+            print("¿Qué dato desea modificar?")
+            print("1. Nombre")
+            print("2. Apellido")
+            print("3. Mail")
+            print("4. Contraseña")
+            print("5. Fecha de nacimiento")
+            print("6. Area")
+            print("7. Estado")
+            print("8. Volver atras")
+            print("9. Salir")
+            rta=validar_respuesta_menu(9)
+            matriz_empleados = csvtomatriz("empleados.csv")
+
+            if rta == 1:
+                empleado.nombre=input("Ingrese su nuevo nombre: ")
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][0] = empleado.nombre
+            elif rta == 2:
+                empleado.apellido=input("Ingrese su nuevo apellido: ")
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][1] = empleado.apellido
+            elif rta == 3:
+                empleado.mail = validar_mail()
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][3] = empleado.mail
+            elif rta == 4:
+                password=empleado.cambiar_password()
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][4] = password
+            elif rta == 5:
+                empleado.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][5] = empleado.fec_nac
+            
+            elif rta == 6:
+                empleado.area=input("Ingrese su nueva area de trabajo: ")
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][6] = empleado.area
+            elif rta == 7:
+                empleado.activo=input("Ingrese su nuevo status: ")
+                for i in range(len(matriz_empleados)):
+                    if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][1] = empleado.activo
+            
+            if rta < 8:
+                matriztocsv("empleados.csv", matriz_empleados,"E")
+                print("Modificación realizada.")
+                print("")
+                empleado.modificar_datos_personales()
+            
+            elif rta == 8: 
+                menu_gerente(self)
+            else:
+                print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+                exit()
         
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout):
@@ -1326,7 +1429,7 @@ def menu_gerente(gerente):
     if rta == 3:
         menu_datos_personales(gerente)
     if rta == 4:
-        menu_administracion_personal()
+        menu_administracion_personal(gerente)
     if rta == 5:
         menu_estadisticas()
     if rta == 6:
@@ -1336,7 +1439,7 @@ def menu_gerente(gerente):
         exit()
 
 # Menu administracion de personal
-def menu_administracion_personal():
+def menu_administracion_personal(gerente):
     print("Bienvenido al menu de administración de personal")
     print("¿Qué desea hacer?")
     print("1. Ver empleados")
@@ -1376,19 +1479,15 @@ def menu_administracion_personal():
         dni_requerido=validar_dni()
         for empleado in lista_empleados:
             if empleado.DNI==dni_requerido:
-                empleado.modificar_datos_personales()
-                for i in range(len(matriz_empleados)):
-                    if dni_requerido==matriz_empleados[i][2]:
-                        matriz_empleados[i]=[empleado.nombre,empleado.apellido,empleado.DNI,empleado.mail,empleado.password,empleado.fec_nac,empleado.area,empleado.activo]
-                        matriztocsv("empleados.csv",matriz_empleados,"E")
+                gerente.modificarEmpleado(empleado)
 
     if rta == 4:
         # Eliminar empleado
         dni_requerido=validar_dni()
         for i in range(len(matriz_empleados)):
-                    if dni_requerido==matriz_empleados[i][2]:
-                        matriz_empleados.pop(i)
-                        matriztocsv("empleados.csv",matriz_empleados,"E")
+            if dni_requerido==matriz_empleados[i][2]:
+                matriz_empleados.pop(i)
+                matriztocsv("empleados.csv",matriz_empleados,"E")
 
     if rta == 5:
         menu_gerente()
