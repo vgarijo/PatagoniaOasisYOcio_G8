@@ -48,7 +48,33 @@ def __str__(self):
 
 
 '''
-
+def menu_administracion_personal():
+    print("Bienvenido al menu de administración de personal")
+    print("¿Qué desea hacer?")
+    print("1. Ver empleados")
+    print("2. Agregar empleado")
+    print("3. Modificar empleado")
+    print("4. Eliminar empleado")
+    print("5. Volver atras")
+    print("6. Salir")
+    rta = validar_respuesta_menu(6)
+    if rta == 1:
+        # método para ver empleados
+        pass
+    if rta == 2:
+        # método para agregar empleado
+        pass
+    if rta == 3:
+        # método para modificar empleado
+        pass
+    if rta == 4:
+        # método para eliminar empleado
+        pass
+    if rta == 5:
+        menu_gerente()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
 '''
 
 

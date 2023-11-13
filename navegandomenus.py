@@ -12,6 +12,10 @@ class Persona:
         self.password = password
         self.fec_nac = fec_nac
 
+    def __str__(self):
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}"
+
+
     def modificar_datos_personales(self):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
@@ -616,21 +620,24 @@ def menu_datos_personales(persona):
     print("5. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        # método para ver datos personales
-        pass
+        print(persona)
+    
     elif rta == 2:
-        # método para modificar datos personales
-        pass
+        persona.modificar_datos_personales()
+        
     elif rta == 3:
-        # método para cambiar contraseña
-        pass
+        persona.cambiar_password()
+        
     elif rta == 4:
         if type(persona)==Cliente:
             menu_cliente()
+
         elif type(persona)==Empleado:
             menu_empleado()
+
         else:
             menu_gerente()
+
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
