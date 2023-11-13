@@ -1,11 +1,11 @@
 ﻿nombre;apellido;dni;mail;contraseña;fecha nac;area;estado
-Lucas;Rodríguez;26341763;LucasRodríguez@gmail.com;J7kP9m3t;03/12/78;gerente;Activo
-Valentina;García;30698215;ValentinaGarcía@gmail.com;a2B8nY4s;09/08/84;mantenimiento;No activo
-Mateo;Pérez;32456987;MateoPérez@gmail.com;H6dR1pN;07/25/75;gerente;Activo
-Sofía;Martínez;25530124;SofíaMartínez@gmail.com;y3G9sP2k;11/03/87;limpieza;No activo
-Santiago;González;29784563;SantiagoGonzález@gmail.com;5jC7dN1r;05/19/82;administrativo;Activo
-Isabella;Sánchez;26783241;IsabellaSánchez@gmail.com;T9pF2gH;02/10/76;administrativo;No activo
+Lucas;Rodriguez;26341763;LucasRodriguez@gmail.com;J7kP9m3t;03/12/78;gerente;Activo
+Valentina;Garcia;30698215;ValentinaGarcia@gmail.com;a2B8nY4s;09/08/84;mantenimiento;No activo
+Mateo;Perez;32456987;MateoPerez@gmail.com;H6dR1pN;07/25/75;gerente;Activo
+Sofia;Martinez;25530124;SofiaMartinez@gmail.com;y3G9sP2k;11/03/87;limpieza;No activo
+Santiago;Gonzalez;29784563;SantiagoGonzalez@gmail.com;5jC7dN1r;05/19/82;administrativo;Activo
+Isabella;Sanchez;26783241;IsabellaSanchez@gmail.com;T9pF2gH;02/10/76;administrativo;No activo
 Juan;Lopez;27568932;JuanLopez@gmail.com;4kD8rM3t;12/06/89;limpieza;No activo
-Emma;Hernández;31204568;EmmaHernández@gmail.com;x1Z9wQ7b;06/14/80;mantenimiento;Activo
-Matías;Díaz;28674159;MatíasDíaz@gmail.com;e3V7mR2s;04/28/73;limpieza;Activo
+Emma;Hernandez;31204568;EmmaHernandez@gmail.com;x1Z9wQ7b;06/14/80;mantenimiento;Activo
+Matias;Diaz;28674159;MatiasDiaz@gmail.com;e3V7mR2s;04/28/73;limpieza;Activo
 Victoria;Flores;29238476;VictoriaFlores@gmail.com;6fJ2nD8t;08/17/86;gerente;No activo
