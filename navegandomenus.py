@@ -559,7 +559,7 @@ def menuPOO():
 
     elif rta == 2:
         
-        menu_empleado()
+        menu_empleado() #falta poner al empleado como parámetro, necesitamos poner una validación como hicimos en cliente ((lo mismo hay que hacer en gerente))
     elif rta == 3:
         
         menu_gerente()
