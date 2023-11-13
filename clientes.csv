@@ -1,3 +1,3 @@
-ï»¿nombre;apellido;DNI;mail;password;fec_nac;gastos;tipo
+Nombre;Apellido;DNI;Mail;Contraseña;Fecha de Nacimiento;Gastos;Tipo
 Franco;Rossi;43864072;frossi@gmail.com;FRossi123;24/07/2002;0;premium
-Valentin;Garijo;43517955;vgarijo@gmail.com;VGarijo123;11/07/2001;0;medium
+Valentin Julian;Montero;43517955;vmontero@gmail.com;VMon123;10/08/2003;0;medium

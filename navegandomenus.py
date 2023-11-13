@@ -15,35 +15,15 @@ class Persona:
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}"
 
-
-    def modificar_datos_personales(self):
-        print("¿Qué dato desea modificar?")
-        print("1. Nombre")
-        print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Fecha de nacimiento")
-        rta=validar_respuesta_menu(5)
-        if rta == 1:
-            self.nombre=input("Ingrese su nuevo nombre: ")
-        elif rta == 2:
-            self.apellido=input("Ingrese su nuevo apellido: ")
-        elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
-            self.mail = validar_mail()
-        elif rta == 5:
-            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
-
     def cambiar_password(self):
         act = input("Ingrese su contraseña actual: ")
         while act != self.password:
             print("Contraseña incorrecta")
             act = input("Ingrese su contraseña actual. Presione 0 para salir: ")
             if act == "0":
-                break
+                return self.password
         nueva = input("Ingrese su nueva contraseña: ")
-        self.password = nueva
+        return nueva
 
 class Cliente(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, gastos,tipo):
@@ -71,27 +51,48 @@ class Cliente(Persona):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Volver atras")
-        print("8. Salir")
-        rta=validar_respuesta_menu(8)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Volver atras")
+        print("7. Salir")
+        rta=validar_respuesta_menu(7)
+        
+        matriz = csvtomatriz("clientes.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    matriz[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    matriz[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    matriz[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    matriz[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
-        elif rta == 6:
             self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
-        elif rta == 7: 
-            menu_cliente()
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    matriz[i][5] = self.fec_nac            
+        
+        if rta < 6:
+            matriztocsv("clientes.csv", matriz,"Cl")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        elif rta == 6: 
+            menu_datos_personales(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
@@ -1001,6 +1002,18 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
             writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Area", "Estado"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
+    elif tipo=="Con":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Numero de pedido", "DNI del cliente", "Fecha", "Item", "Precio"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
+    elif tipo=="Cl":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Gastos", "Tipo"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
 
 def strtodatime(fecha):
     fecha = fecha.split("/")
@@ -1040,7 +1053,7 @@ def menuPOO():
                     if contrasena == matriz_clientes[i][4]:
                         print("Ingreso exitoso")
                         cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
-                        menu_cliente(cliente),
+                        menu_cliente(cliente)
                         exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
@@ -1063,7 +1076,7 @@ def menuPOO():
                         print("Ingreso exitoso")
                         empleado = Empleado(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_empleado(empleado)
-                        break
+                        exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     elif rta == 3:
@@ -1085,7 +1098,7 @@ def menuPOO():
                         print("Ingreso exitoso")
                         gerente = Gerente(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_gerente(gerente)
-                        break
+                        exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     else:
@@ -1241,33 +1254,29 @@ def menu_consumos():
     print("")
 
 # Menu datos personales
-def menu_datos_personales(cliente):
+def menu_datos_personales(persona):
     print("Datos personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
     print("2. Modificar Datos Personales")
-    print("3. Cambiar Contraseña")
-    print("4. Volver atras")
-    print("5. Salir")
-    rta = validar_respuesta_menu(5)
+    print("3. Volver atras")
+    print("4. Salir")
+    rta = validar_respuesta_menu(4)
     if rta == 1:
-        print(cliente)
-        menu_datos_personales(cliente)
+        print(persona)
+        menu_datos_personales(persona)
     elif rta == 2:
-        cliente.modificar_datos_personales()
-        
+        persona.modificar_datos_personales()
+
     elif rta == 3:
-        persona.cambiar_password()
-        
-    elif rta == 4:
         if type(persona)==Cliente:
-            menu_cliente()
+            menu_cliente(persona)
 
         elif type(persona)==Empleado:
-            menu_empleado()
+            menu_empleado(persona)
 
         else:
-            menu_gerente()
+            menu_gerente(persona)
 
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
