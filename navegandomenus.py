@@ -23,9 +23,7 @@ class Persona:
         print("3. DNI")
         print("4. Mail")
         print("5. Fecha de nacimiento")
-        print("6. Volver atras")
-        print("7. Salir")
-        rta=validar_respuesta_menu(7)
+        rta=validar_respuesta_menu(5)
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
         elif rta == 2:
@@ -67,6 +65,36 @@ class Cliente(Persona):
     
     def __str__(self) -> str:
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+
+    def modificar_datos_personales(self):
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Apellido")
+        print("3. DNI")
+        print("4. Mail")
+        print("5. Contraseña")
+        print("6. Fecha de nacimiento")
+        print("7. Volver atras")
+        print("8. Salir")
+        rta=validar_respuesta_menu(8)
+        if rta == 1:
+            self.nombre=input("Ingrese su nuevo nombre: ")
+        elif rta == 2:
+            self.apellido=input("Ingrese su nuevo apellido: ")
+        elif rta == 3:
+            self.DNI = validar_dni()
+        elif rta == 4:
+            self.mail = validar_mail()
+        elif rta == 5:
+            self.cambiar_password()
+        elif rta == 6:
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+        elif rta == 7: 
+            menu_cliente()
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+
 
     def modificar_reserva(self, reserva): ### este es el metodo de reservas, después hago el de cliente
         while True:
@@ -124,10 +152,80 @@ class Empleado(Persona):
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
 
+    def modificar_datos_personales(self):
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Apellido")
+        print("3. DNI")
+        print("4. Mail")
+        print("5. Contraseña")
+        print("6. Fecha de nacimiento")
+        print("7. Area")
+        print("8. Estado")
+        print("9. Volver atras")
+        print("10. Salir")
+        rta=validar_respuesta_menu(10)
+        if rta == 1:
+            self.nombre=input("Ingrese su nuevo nombre: ")
+        elif rta == 2:
+            self.apellido=input("Ingrese su nuevo apellido: ")
+        elif rta == 3:
+            self.DNI = validar_dni()
+        elif rta == 4:
+            self.mail = validar_mail()
+        elif rta == 5:
+            self.cambiar_password()
+        elif rta == 6:
+            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
+        elif rta == 7:
+            self.area = input("Ingrese su nueva area: ")
+        elif rta == 8:
+            self.activo = input("Ingrese su nuevo estado: ")
+        elif rta == 9: 
+            menu_empleado()
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+
 
 class Gerente(Empleado):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
+    
+    def modificar_datos_personales(self):
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Apellido")
+        print("3. DNI")
+        print("4. Mail")
+        print("5. Contraseña")
+        print("6. Fecha de nacimiento")
+        print("7. Area")
+        print("8. Estado")
+        print("9. Volver atras")
+        print("10. Salir")
+        rta=validar_respuesta_menu(10)
+        if rta == 1:
+            self.nombre=input("Ingrese su nuevo nombre: ")
+        elif rta == 2:
+            self.apellido=input("Ingrese su nuevo apellido: ")
+        elif rta == 3:
+            self.DNI = validar_dni()
+        elif rta == 4:
+            self.mail = validar_mail()
+        elif rta == 5:
+            self.cambiar_password()
+        elif rta == 6:
+            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
+        elif rta == 7:
+            self.area = input("Ingrese su nueva area: ")
+        elif rta == 8:
+            self.activo = input("Ingrese su nuevo estado: ")
+        elif rta == 9: 
+            menu_gerente()
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
 
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, fecha_ing, fecha_egr, cant_personas):
@@ -734,13 +832,39 @@ def menu_administracion_personal():
         
     if rta == 2:
         # método para agregar empleado
-        pass
+        print('Ingrese los datos del nuevo empleado:')
+        print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
+        nombre=input("Nombre del empleado: ")
+        apellido=input("Apellido del empleado: ")
+        dni=validar_dni()
+        mail=validar_mail()
+        password=input("Constraseña del empleado: ")
+        print("Ingrese fecha de nacimiento: ")
+        fecha_nac=validar_fec("")
+        area=input("Área del empleado: ")
+        activo=input("Área del empleado (Activo o No activo): ")
+        matriz_empleados.append([nombre,apellido,dni,mail,password,fecha_nac,area,activo])
+        matriztocsv("empleados.csv",matriz_empleados,"E")
+        
     if rta == 3:
         # método para modificar empleado
-        pass
+        dni_requerido=validar_dni()
+        for empleado in lista_empleados:
+            if empleado.DNI==dni_requerido:
+                empleado.modificar_datos_personales()
+                for i in range(len(matriz_empleados)):
+                    if dni_requerido==matriz_empleados[i][2]:
+                        matriz_empleados[i]=[empleado.nombre,empleado.apellido,empleado.DNI,empleado.mail,empleado.password,empleado.fec_nac,empleado.area,empleado.activo]
+                        matriztocsv("empleados.csv",matriz_empleados,"E")
+
     if rta == 4:
         # método para eliminar empleado
-        pass
+        dni_requerido=validar_dni()
+        for i in range(len(matriz_empleados)):
+                    if dni_requerido==matriz_empleados[i][2]:
+                        matriz_empleados.pop(i)
+                        matriztocsv("empleados.csv",matriz_empleados,"E")
+
     if rta == 5:
         menu_gerente()
     else:

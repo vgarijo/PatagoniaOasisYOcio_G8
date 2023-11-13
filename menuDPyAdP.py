@@ -50,7 +50,7 @@ def __str__(self):
 
 
 
-
+'''
 def menu_administracion_personal():
     print("Bienvenido al menu de administración de personal")
     print("¿Qué desea hacer?")
@@ -96,7 +96,7 @@ def menu_administracion_personal():
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
 
-
+'''
 
 # hago una función para pasar todos los empleados de la matriz a que sean de clase empleado
 '''
@@ -132,9 +132,18 @@ activo=input("Área del empleado (Activo o No activo): ")
 matriz_empleados.
 '''
 
+# método para modificar empleado
+'''
+dni_requerido=validar_dni()
+for empleado in lista_empleados:
+    if empleado.DNI==dni_requerido:
+        empleado.modificar_datos_personales()
+        for i in range(len(matriz_empleados)):
+            if dni_requerido==matriz_empleados[i][2]:
+                matriz_empleados[i]=[empleado.nombre,empleado.apellido,empleado.DNI,empleado.mail,empleado.password,empleado.fec_nac,empleado.area,empleado.activo]
 
 
-
+'''
 
 
 
