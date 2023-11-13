@@ -11,8 +11,6 @@ def validar_reserva(lista_reservas):
     return "No existe dicha reserva."  ## buscar una forma de volver al menu de reservas
 
 
-
-
 def nueva_reserva(self, cant_personas, habitacion, lista_reservas): #cliente, habitacion, fecha_reserva (datetime. now()), fecha_ing, fecha_egr, numero_res, cant_personas
     cliente=self.dni
     hab=habitacion
@@ -45,7 +43,6 @@ def modificar_reserva(self, lista_reservas):  # método que va en cliente
     reserva.modificar()
 
     #ver cómo hacerlo
-
 
 
 def checkIn(self):

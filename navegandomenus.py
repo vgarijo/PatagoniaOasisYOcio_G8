@@ -606,7 +606,7 @@ def menu_consumos():
     print("")
 
 # Menu datos personales
-def menu_datos_personales():
+def menu_datos_personales(cliente):
     print("Personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
