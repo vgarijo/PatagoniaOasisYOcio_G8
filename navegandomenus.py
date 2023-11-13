@@ -981,6 +981,7 @@ def csvtomatriz(archivo):
             matriz = []
             for row in reader:
                 matriz.append(row)
+        archivo.close()
         return matriz[1:]
     except IOError:
         print("No se encontró el archivo.")
@@ -998,6 +999,7 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
             writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Area", "Estado"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
+    archivo.close()
 
 def strtodatime(fecha):
     fecha = fecha.split("/")
