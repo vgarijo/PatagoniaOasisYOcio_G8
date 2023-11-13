@@ -1264,6 +1264,7 @@ def menu_datos_personales(persona):
     rta = validar_respuesta_menu(4)
     if rta == 1:
         print(persona)
+        print("")
         menu_datos_personales(persona)
     elif rta == 2:
         persona.modificar_datos_personales()
