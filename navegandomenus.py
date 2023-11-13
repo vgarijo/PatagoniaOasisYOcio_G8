@@ -1,3 +1,8 @@
+import csv
+import numpy as np
+import random as rd
+import datetime
+
 class Persona:
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):
         self.nombre = nombre
@@ -42,8 +47,9 @@ class Cliente(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, tipo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
         self.tipo = tipo
-        self.reservas = []
-        self.consumos = []
+        
+        self.reservas = Lista_Enlazada()
+        self.consumos = Lista_Enlazada()
 
         matriz=csvtomatriz("reservas.csv")
         for i in range(len(matriz)):
@@ -58,7 +64,6 @@ class Cliente(Persona):
     def __str__(self) -> str:
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
         
-
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
@@ -70,13 +75,16 @@ class Gerente(Empleado):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
 
 class Reserva():
-    def __init__(self, cliente, habitacion, fecha_ing, fecha_egr, numero_res, cant_personas):
-        self.cliente = cliente
+    def __init__(self, numero_res, dni_cliente, habitacion, fecha_ing, fecha_egr, cant_personas):
+        self.dni_cliente = dni_cliente
         self.habitacion = habitacion
         self.fecha_ing = fecha_ing
         self.fecha_egr = fecha_egr
         self.numero_res = numero_res
         self.cant_personas = cant_personas
+
+    def __str__(self) -> str:
+        return f"Numero de reserva: {self.numero_res}\nDNI del cliente: {self.dni_cliente}\nHabitacion: {self.habitacion}\nFecha de ingreso: {self.fecha_ing}\nFecha de egreso: {self.fecha_egr}\nCantidad de personas: {self.cant_personas}"   
 
 class Consumo():
     def __init__(self, nro_pedido, cliente, fecha, item, precio):
@@ -85,6 +93,218 @@ class Consumo():
         self.fecha = fecha
         self.item = item
         self.precio = precio
+    
+    def __str__(self) -> str:
+        return f"Numero de pedido: {self.numero_pedido}\nCliente: {self.cliente}\nFecha: {self.fecha}\nItem: {self.item}\nPrecio: {self.precio}"
+
+class Nodo(): # Nodo de la lista enlazada
+    def __init__(self,dato=None,prox=None): # Constructor de la clase
+        self.dato=dato # dato del nodo
+        self.prox=prox # Puntero al siguiente nodo
+    def __str__(self): # Devuelve una cadena con el dato del nodo
+        return str(self.dato)
+
+class Lista_Enlazada(): # Lista enlazada
+    def __init__(self): # Constructor de la clase
+        self.head=None
+        self.len=0 # Longitud de la lista
+    
+    def insertarinicio(self,dato): # Agrega un elemento al inicio de la lista
+        nodo=Nodo(dato) # Crea un nuevo nodo
+        nodo.prox=self.head # El nodo siguiente del nuevo nodo es el nodo inicial
+        self.head=nodo # El nodo inicial es el nuevo nodo
+        self.len+=1 # Incrementa la longitud de la lista
+
+    def append(self,dato): # Agrega un elemento al final de la lista
+        nodo=Nodo(dato) # Crea un nuevo nodo
+        if self.head==None: # Si la lista está vacía
+            self.head=nodo # El nodo inicial es el nuevo nodo
+        else: # Si la lista no está vacía
+            act=self.head # Crea un nodo auxiliar
+            while act.prox!=None: # Recorre la lista hasta el último nodo
+                act=act.prox # Avanza al siguiente nodo
+            act.prox=nodo # El nodo siguiente del último nodo es el nuevo nodo
+        self.len+=1 # Incrementa la longitud de la lista
+
+    def pop (self): # Elimina el último elemento de la lista
+        if self.head==None: # Si la lista está vacía
+            print("Lista vacía") # Muestra un mensaje de error
+        elif self.head.prox==None: # Si la lista tiene un solo elemento
+            self.head=None # El nodo inicial es None
+            self.len-=1 # Decrementa la longitud de la lista
+        else: # Si la lista tiene más de un elemento
+            act=self.head # Crea un nodo auxiliar
+            while act.prox.prox!=None: # Recorre la lista hasta el penúltimo nodo
+                act=act.prox # Avanza al siguiente nodo
+            act.prox=None # El nodo siguiente del penúltimo nodo es None
+            self.len-=1 # Decrementa la longitud de la lista    
+
+    def insertar(self,dato,pos): # Inserta un elemento en la posición indicada
+        if pos<=self.len: # Si la posición es válida
+            nodo=Nodo(dato) # Crea un nuevo nodo
+            act=self.head # Crea un nodo auxiliar
+            if pos==0: # Si la posición es la primera
+                nodo.prox=self.head # El nodo siguiente del nuevo nodo es el nodo inicial
+                self.head=nodo # El nodo inicial es el nuevo nodo
+            else: # Si la posición no es la primera
+                for i in range(1,pos): # Recorre la lista hasta la posición anterior a la indicada
+                    act=act.prox # Avanza al siguiente nodo
+                nodo.prox=act.prox # El nodo siguiente del nuevo nodo es el nodo siguiente del nodo actual
+                act.prox=nodo # El nodo siguiente del nodo actual es el nuevo nodo
+            self.len+=1 # Incrementa la longitud de la lista
+        else:
+            print("Posición inválida") # Si la posición no es válida, muestra un mensaje de error
+    
+    def eliminar(self,pos): # Elimina un elemento de la posición indicada
+        if pos<self.len: # Si la posición es válida
+            if pos==0: # Si la posición es la primera
+                self.head=self.head.prox # El nodo inicial es el nodo siguiente del nodo inicial
+            else: # Si la posición no es la primera
+                act=self.head # Crea un nodo auxiliar
+                for i in range(1,pos): # Recorre la lista hasta la posición anterior a la indicada
+                    act=act.prox # Avanza al siguiente nodo
+                act.prox=act.sig.prox # El nodo siguiente del nodo actual es el nodo siguiente del nodo siguiente del nodo actual
+            self.len-=1 # Decrementa la longitud de la lista
+        else:
+            print("Posición inválida")
+    
+    def mostrar(self): # Muestra los elementos de la lista
+        act=self.head # Crea un nodo auxiliar
+        for i in range(self.len): # Recorre la lista
+            print(act.dato) # Muestra el dato del nodo actual
+            act=act.prox # Avanza al siguiente nodo
+    
+    def buscar(self,dato): # Busca un elemento en la lista
+        act=self.head # Crea un nodo auxiliar
+        for i in range(self.len): # Recorre la lista
+            if act.dato==dato: # Si el dato del nodo actual es el buscado
+                return i # Devuelve la posición del nodo actual
+            act=act.prox # Avanza al siguiente nodo
+        return -1 # Si no se encuentra el dato, devuelve -1
+    
+    def obtener(self,pos): # Obtiene el dato de un elemento de la lista
+        if pos<self.len: # Si la posición es válida
+            act=self.head # Crea un nodo auxiliar
+            for i in range(pos): # Recorre la lista hasta la posición indicada
+                act=act.prox # Avanza al siguiente nodo
+            return act.dato # Devuelve el dato del nodo actual
+        else:
+            print("Posición inválida")
+            return None
+    
+    def modificar(self,dato,pos): # Modifica el dato de un elemento de la lista
+        if pos<self.len: # Si la posición es válida
+            act=self.head # Crea un nodo auxiliar
+            for i in range(pos): # Recorre la lista hasta la posición indicada
+                act=act.prox # Avanza al siguiente nodo
+            act.dato=dato # Modifica el dato del nodo actual
+        else:
+            print("Posición inválida")
+    
+    def intercambiar(self,pos1,pos2): # Intercambia dos elementos de la lista
+        if pos1<self.len and pos2<self.len: # Si las posiciones son válidas
+            act1=self.head # Crea un nodo auxiliar
+            for i in range(pos1): # Recorre la lista hasta la posición indicada
+                act1=act1.prox # Avanza al siguiente nodo
+            act2=self.head # Crea un nodo auxiliar
+            for i in range(pos2): # Recorre la lista hasta la posición indicada
+                act2=act2.prox # Avanza al siguiente nodo
+            aux=act1.dato # Guarda el dato del nodo actual
+            act1.dato=act2.dato # Modifica el dato del nodo actual
+            act2.dato=aux # Modifica el dato del nodo actual
+        else:
+            print("Posición inválida")
+    
+    def ordenar(self): # Ordena los elementos de la lista
+        for i in range(self.len-1): # Recorre la lista
+            for j in range(i+1,self.len): # Recorre la lista
+                if self.obtener(i)>self.obtener(j): # Si el dato del nodo actual es mayor que el dato del nodo siguiente
+                    self.intercambiar(i,j) # Intercambia los datoes de los nodos
+    
+    def invertir(self): # Invierte los elementos de la lista
+        for i in range(self.len//2): # Recorre la lista hasta la mitad
+            self.intercambiar(i,self.len-i-1) # Intercambia los datoes de los nodos
+        
+    def vacia(self): # Devuelve True si la lista está vacía
+        return self.len==0
+    
+    def longitud(self): # Devuelve la longitud de la lista
+        return self.len
+    
+    def limpiar(self): # Elimina todos los elementos de la lista
+        self.head=None
+        self.len=0
+    
+    def clonar(self): # Devuelve una copia de la lista
+        nueva=Lista_Enlazada() # Crea una nueva lista
+        act=self.head # Crea un nodo auxiliar
+        for i in range(self.len): # Recorre la lista
+            nueva.insertar(act.dato,i) # Inserta el dato del nodo actual en la nueva lista
+            act=act.prox # Avanza al siguiente nodo
+        return nueva # Devuelve la nueva lista
+    
+    def __del__(self): # Destructor de la clase
+        self.limpiar() # Elimina todos los elementos de la lista
+    
+    def __str__(self): # Devuelve una cadena con los elementos de la lista
+        cadena=""
+        act=self.head # Crea un nodo auxiliar
+        for i in range(self.len): # Recorre la lista
+            cadena+=str(act.dato)+" " # Agrega el dato del nodo actual a la cadena
+            cadena+="\n"
+            act=act.prox # Avanza al siguiente nodo
+        if cadena == "": # Si la cadena está vacía
+            cadena = "Lista vacía"
+        return cadena # Devuelve la cadena
+    
+    def __len__(self): # Devuelve la longitud de la lista
+        return self.len
+    
+    def __getitem__(self,pos): # Devuelve el dato de un elemento de la lista
+        return self.obtener(pos)
+    
+    def __setitem__(self,pos,dato): # Modifica el dato de un elemento de la lista
+        self.modificar(dato,pos)
+    
+    def __eq__(self,otra): # Devuelve True si las listas son iguales
+        if self.len==otra.len: # Si los longituds de las listas son iguales
+            act1=self.head # Crea un nodo auxiliar
+            act2=otra.head # Crea un nodo auxiliar
+            for i in range(self.len): # Recorre la lista
+                if act1.dato!=act2.dato: # Si los datoes de los nodos actuales son distintos
+                    return False # Devuelve False
+                act1=act1.prox # Avanza al siguiente nodo
+                act2=act2.prox # Avanza al siguiente nodo
+            return True # Devuelve True
+        else:
+            return False
+    
+    def __ne__(self,otra): # Devuelve True si las listas son distintas
+        return not self==otra
+    
+    def __lt__(self,otra): # Devuelve True si la lista es menor que la otra
+        if self.len<otra.len: # Si la longitud de la lista es menor que el de la otra
+            return True # Devuelve True
+        elif self.len==otra.len: # Si la longitud de la lista es igual que el de la otra
+            act1=self.head # Crea un nodo auxiliar
+            act2=otra.head # Crea un nodo auxiliar
+            for i in range(self.len): # Recorre la lista
+                if act1.dato>act2.dato: # Si el dato del nodo actual es mayor que el dato del nodo actual de la otra lista
+                    return False # Devuelve False
+                act1=act1.prox # Avanza al siguiente nodo
+                act2=act2.prox # Avanza al siguiente nodo
+            return True # Devuelve True
+        else:
+            return False
+    
+    def __le__(self,otra): # Devuelve True si la lista es menor o igual que la otra
+        return self<otra or self==otra
+    
+    def __gt__(self,otra): # Devuelve True si la lista es mayor que la otra
+        return not self<=otra
+    
+    def __ge__(self,otra): # Devuelve True si la lista es mayor o igual que la otra
+        return not self<otra
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
@@ -118,14 +338,21 @@ def ingreso_usuario():
 
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
-    rta= int(input("Ingrese la opción deseada: "))
+    # Paso los datos de rtas a string
+    rtas = [str(i) for i in rtas]
+    rta = input("Ingrese la opción deseada: ")
     while rta not in rtas:
-        rta= int(input("Respuesta no valida, ingrese otra opcion: "))
+        rta = (input("Respuesta no valida, ingrese otra opcion: "))
     print("")
-    return rta
+    return int(rta)
 
-from csvtomatriz import csvtomatriz
-#from csvtomatriz import matriztocsv
+def csvtomatriz(archivo):
+    with open(archivo) as csvfile:
+        reader = csv.reader(csvfile, delimiter=';')
+        matriz = []
+        for row in reader:
+            matriz.append(row)
+    return matriz[1:]
 
 # Menu principal
 def menuPOO():
@@ -145,7 +372,7 @@ def menuPOO():
                 if contrasena == matriz[i][4]:
                     print("Ingreso exitoso")
                     cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5],matriz[i][6])
-                    print(cliente)
+                    menu_cliente(cliente)
                     pass
                 else:
                     print("Contraseña incorrecta")
@@ -153,7 +380,6 @@ def menuPOO():
             elif i == len(matriz)-1:
                 print("Mail no registrado")
                 mail,contrasena=ingreso_usuario()
-        menu_cliente(cliente)
     elif rta == 2:
         mail,contrasena=ingreso_usuario()
         menu_empleado()
@@ -166,7 +392,7 @@ def menuPOO():
 
 # Menu cliente
 def menu_cliente(cliente): 
-    print("Bienvenido al menu de cliente")
+    print("Bienvenido", cliente.nombre, "al menu de cliente.")
     print("¿Qué desea hacer?")
     print("1. Mis Reservas")
     print("2. Mis Consumos")
@@ -190,71 +416,43 @@ def menu_cliente(cliente):
 def menu_reservas(cliente):
     print("Mis reservas")
     print("¿Qué desea hacer?")
-    print("1. Historial de Reservas")
-    print("2. Nueva Reserva")
-    print("3. Volver atras")
-    print("4. Salir")
+    print("1. Reserva actual")
+    print("2. Reservas anteriores")
+    print("3. Nueva Reserva")
+    print("4. Volver atras")
+    print("5. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        menu_historial_reservas()
+        reservas_actuales = []
+        for i in range(len(cliente.reservas)):
+            if cliente.reservas[i].fecha_egr >= datetime.now():
+                reservas_actuales.append(cliente.reservas[i])
+        
+        if len(reservas_actuales) == 0:
+            menu_reserva_actual(cliente, None)
+        elif len(reservas_actuales) == 1:
+            menu_reserva_actual(cliente, reservas_actuales[0])
+        else:
+            print("Tiene varias reservas actuales. Seleccione una:")
+            for i in range(len(reservas_actuales)):
+                print(i+1, ". ", reservas_actuales[i])
+            rta = validar_respuesta_menu(len(reservas_actuales))
+            menu_reserva_actual(cliente, reservas_actuales[rta-1])
     elif rta == 2:
-        menu_nueva_reserva()
-        pass
+        menu_reservas_anteriores(cliente)
+
     elif rta == 3:
-        menu_cliente()
+        menu_nueva_reserva(cliente)
+
+    elif rta == 4:
+        menu_cliente(cliente)
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
 
     print("")
 
-def menu_historial_reservas():
-    print("Historial de reservas")
-    print("¿Qué desea hacer?")
-    print("1. Reserva Actual")
-    print("2. Visualizar Reservas Anteriores")
-    print("3. Volver atras")
-    print("4. Salir")
-    rta = validar_respuesta_menu(4)
-    if rta == 1:
-        menu_reserva_actual()
-    elif rta == 2:
-        menu_reservas_anteriores()
-        pass
-    elif rta == 3:
-        menu_reservas()
-    else:
-        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
-        exit()
-
-    print("")
-
-def menu_reservas_anteriores():
-    print("Reservas anteriores")
-    print("¿Qué desea hacer?")
-    print("1. Atrás")
-    print("2. Salir")
-    rta = validar_respuesta_menu(2)
-    if rta == 1:
-        menu_historial_reservas()
-    else:
-        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
-        exit()
-
-def menu_nueva_reserva():
-    print("Nueva reserva")
-    print("¿Qué desea hacer?")
-    print("1. Atrás")
-    print("2. Salir")
-    rta = validar_respuesta_menu(2)
-    if rta == 1:
-        menu_reservas()
-    else:
-        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
-        exit()
-
-def menu_reserva_actual():
-    reserva_actual = None
+def menu_reserva_actual(cliente, reserva_actual):
     if reserva_actual == None:
         print("No tiene una reserva actual")
         print("¿Qué desea hacer?")
@@ -262,7 +460,7 @@ def menu_reserva_actual():
         print("2. Salir")
         rta = validar_respuesta_menu(2)
         if rta == 1:
-            menu_historial_reservas()
+            menu_reservas(cliente)
         
     else:
         print("Reserva actual")
@@ -296,12 +494,37 @@ def menu_reserva_actual():
             # método para hacer check out
             pass
         elif rta == 6:
-            menu_historial_reservas()
+            menu_reservas(cliente)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
 
     print("")
+
+def menu_reservas_anteriores(cliente):
+    print("Reservas anteriores")
+    print("¿Qué desea hacer?")
+    print("1. Atrás")
+    print("2. Salir")
+    rta = validar_respuesta_menu(2)
+    if rta == 1:
+        menu_reservas(cliente)
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
+
+def menu_nueva_reserva():
+    print("Nueva reserva")
+    print("¿Qué desea hacer?")
+    print("1. Atrás")
+    print("2. Salir")
+    rta = validar_respuesta_menu(2)
+    if rta == 1:
+        menu_reservas()
+    else:
+        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+        exit()
+
 
 # Menu consumos
 def menu_consumos():
