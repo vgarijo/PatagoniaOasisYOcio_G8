@@ -39,11 +39,25 @@ class Persona:
         self.password = nueva
 
 class Cliente(Persona):
-    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, reservas, consumos, tipo):
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, tipo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
-        self.reservas = reservas
-        self.consumos = consumos
         self.tipo = tipo
+        self.reservas = []
+        self.consumos = []
+
+        matriz=csvtomatriz("reservas.csv")
+        for i in range(len(matriz)):
+            if self.DNI == matriz[i][1]:
+                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5]))
+        
+        matriz=csvtomatriz("consumos.csv")
+        for i in range(len(matriz)):
+            if self.DNI == matriz[i][1]:
+                self.consumos.append(Consumo(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4]))
+    
+    def __str__(self) -> str:
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+        
 
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
@@ -64,6 +78,13 @@ class Reserva():
         self.numero_res = numero_res
         self.cant_personas = cant_personas
 
+class Consumo():
+    def __init__(self, nro_pedido, cliente, fecha, item, precio):
+        self.numero_pedido = nro_pedido
+        self.cliente = cliente
+        self.fecha = fecha
+        self.item = item
+        self.precio = precio
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
@@ -123,12 +144,13 @@ def menuPOO():
             if mail == matriz[i][3]:
                 if contrasena == matriz[i][4]:
                     print("Ingreso exitoso")
-                    cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5], matriz[i][6], matriz[i][7], matriz[i][8])
+                    cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5],matriz[i][6])
+                    print(cliente)
                     pass
                 else:
                     print("Contraseña incorrecta")
                     mail,contrasena=ingreso_usuario()
-            else:
+            elif i == len(matriz)-1:
                 print("Mail no registrado")
                 mail,contrasena=ingreso_usuario()
         menu_cliente(cliente)
@@ -165,7 +187,7 @@ def menu_cliente(cliente):
         exit()
 
 # Menu Reservas
-def menu_reservas():
+def menu_reservas(cliente):
     print("Mis reservas")
     print("¿Qué desea hacer?")
     print("1. Historial de Reservas")
@@ -456,6 +478,5 @@ def recaudacion_diaria():
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
-
 
 menuPOO()
