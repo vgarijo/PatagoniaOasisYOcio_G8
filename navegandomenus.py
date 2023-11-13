@@ -429,7 +429,9 @@ class Cliente(Persona):
             print("Ya realizó el check in")
             print("")
             menu_reserva_actual(self, reserva)
-        elif strtodatime(reserva.fecha_ing) != dt.datetime.now():
+            fecha=dt.datetime.now()
+            fecha2=strtodatime(reserva.fecha_ing)
+        elif reserva.fecha_ing != dt.datetime.today().strftime("%d/%m/%Y"):
             print("No puede realizar el check una fecha distinta al del ingrso")
             print("")
             menu_reserva_actual(self, reserva)
@@ -440,12 +442,12 @@ class Cliente(Persona):
             rta = validar_respuesta_menu(2)
             if rta == 1:
                 reserva.checkin = "si"
-                reserva.horario_checkin = dt.datetime.now().hour
+                reserva.horario_checkin = dt.datetime.now().strftime("%H:%M")
                 matriz=csvtomatriz("reservas.csv")
                 for i in range(len(matriz)):
                     if reserva.numero_res == matriz[i][0]:
                         matriz[i][7] = "si"
-                        matriz[i][9] = dt.datetime.now().hour
+                        matriz[i][9] = dt.datetime.now().strftime("%H:%M")
                 matriztocsv("reservas.csv", matriz,"R")
                 print("Check in realizado.")
                 print("")
@@ -473,12 +475,12 @@ class Cliente(Persona):
             rta = validar_respuesta_menu(2)
             if rta == 1:
                 reserva.checkout = "si"
-                reserva.horario_checkout = dt.datetime.now().hour
+                reserva.horario_checkout = dt.datetime.now().strftime("%H:%M")
                 matriz=csvtomatriz("reservas.csv")
                 for i in range(len(matriz)):
                     if reserva.numero_res == matriz[i][0]:
                         matriz[i][8] = "si"
-                        matriz[i][10] = dt.datetime.now().hour
+                        matriz[i][10] = dt.datetime.now().strftime("%H:%M")
                 matriztocsv("reservas.csv", matriz,"R")
                 print("Check out realizado.")
                 print("")
