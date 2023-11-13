@@ -46,8 +46,9 @@ class Persona:
         self.password = nueva
 
 class Cliente(Persona):
-    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, tipo):
+    def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, gastos,tipo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
+        self.gastos = gastos
         self.tipo = tipo
         
         self.reservas = Lista_Enlazada()
@@ -64,7 +65,7 @@ class Cliente(Persona):
                 self.consumos.append(Consumo(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4]))
     
     def __str__(self) -> str:
-        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nGastos:{self.gastos}\nTipo: {self.tipo}\n\nReservas:\n{self.reservas}\n\nConsumos:\n{self.consumos}"
 
     def modificar_datos_personales(self):
         print("¿Qué dato desea modificar?")
@@ -1038,8 +1039,8 @@ def menuPOO():
                 if mail == matriz_clientes[i][3]:
                     if contrasena == matriz_clientes[i][4]:
                         print("Ingreso exitoso")
-                        cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6])
-                        menu_cliente(cliente)
+                        cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
+                        menu_cliente(cliente),
                         exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
@@ -1240,8 +1241,8 @@ def menu_consumos():
     print("")
 
 # Menu datos personales
-def menu_datos_personales(persona):
-    print("Personales")
+def menu_datos_personales(cliente):
+    print("Datos personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
     print("2. Modificar Datos Personales")
@@ -1250,10 +1251,10 @@ def menu_datos_personales(persona):
     print("5. Salir")
     rta = validar_respuesta_menu(5)
     if rta == 1:
-        print(persona)
-    
+        print(cliente)
+        menu_datos_personales(cliente)
     elif rta == 2:
-        persona.modificar_datos_personales()
+        cliente.modificar_datos_personales()
         
     elif rta == 3:
         persona.cambiar_password()
