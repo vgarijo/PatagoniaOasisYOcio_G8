@@ -56,7 +56,7 @@ class Cliente(Persona):
         matriz=csvtomatriz("reservas.csv")
         for i in range(len(matriz)):
             if self.DNI == matriz[i][1]:
-                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8]))
+                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8]),matriz[i][9],matriz[i][10])
         
         matriz=csvtomatriz("consumos.csv")
         for i in range(len(matriz)):
@@ -622,8 +622,7 @@ class Cliente(Persona):
                             menu_reservas(self)
                             break          
 
-        menu_reservas(self)
-        
+        menu_reservas(self) 
 
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
@@ -1430,6 +1429,5 @@ def recaudacion_diaria():
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
-
 
 menuPOO()
