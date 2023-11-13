@@ -1,7 +1,7 @@
 import csv
 import numpy as np
 import random as rd
-import datetime
+import datetime as dt
 
 class Persona:
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):
@@ -63,7 +63,55 @@ class Cliente(Persona):
     
     def __str__(self) -> str:
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+
+    def modificar_reserva(self, reserva): ### este es el metodo de reservas, después hago el de cliente
+        while True:
+            print("¿Qué desea modificar?")
+            print("1. Habitacion:", reserva.habitacion)
+            print("2. Cantidad de personas:", reserva.cant_personas)
+            print("3. Fecha de ingreso:", reserva.fecha_ing)
+            print("4. Fecha de egreso:", reserva.fecha_egr)
+            print("5. Volver atras")
+            rta = validar_respuesta_menu(5)
+            if rta == 1: #modificar habitacion
+                reserva.habitacion=self.elegir_habitacion(reserva)
+            elif rta == 2: #modificar cant de personas
+                reserva.cant_personas=int(input("Ingrese el nuevo número de habitacion: "))
+            elif rta == 3: #modificar fecha de comienzo de reserva
+                reserva.fecha_ing=validar_fec()
+            elif rta == 4: #modificar fecha de salida
+                reserva.fecha_egr=validar_fec()
+            
+            if rta != 5:
+                matriz=csvtomatriz("reservas.csv")
+                for i in range(len(matriz)):
+                    if reserva.numero_res == matriz[i][0]:
+                        matriz[i][2] = reserva.habitacion
+                        matriz[i][3] = reserva.fecha_ing
+                        matriz[i][4] = reserva.fecha_egr
+                        matriz[i][5] = reserva.cant_personas
+                matriztocsv("reservas.csv", matriz)
+
+            else:
+                menu_reservas()
+                break
         
+    def elegir_habitacion(self, reserva):
+        print("Habitaciones disponibles:")
+        print("1. Habitacion simple: $100 por noche, máximo 1 persona, 1 cama individual, no incluye baño privado ni ventana balcón.")
+        print("2. Habitacion doble: $200 por noche, máximo 2 personas, 1 cama matrimonial, no incluye baño privado y ventana balcón.")
+        print("3. Suite: $300 por noche, máximo 2 personas, 1 cama matrimonial, incluye baño privado y ventana balcón.")
+        print("4. Familiar: $400 por noche, máximo 4 personas, 1 cama matrimonial y 2 camas individuales, incluye baño privado y ventana balcón.")
+        print("5. Volver atras")
+
+        rta = validar_respuesta_menu(5)
+        
+        if rta == 1:
+            disponible = self.chequear_disponibilidad("simple", reserva)
+        
+    def chequear_disponibilidad(self, tipo, reserva):
+        print("Chequeando disponibilidad...")
+
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
@@ -327,15 +375,6 @@ def validar_fec(mensaje):
         fecha = input("Fecha no válida, ingrese otra: ")
     return fecha
 
-def ingreso_usuario():
-    mail = input("Ingrese su mail. Presione 0 para volver: ")
-    if mail == "0":
-        menuPOO()
-    else:
-        contrasena = input("Ingrese su contraseña: ")
-        print("")
-        return mail, contrasena
-
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
     # Paso los datos de rtas a string
@@ -354,6 +393,18 @@ def csvtomatriz(archivo):
             matriz.append(row)
     return matriz[1:]
 
+def matriztocsv(archivo, matriz):
+    with open(archivo, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=';')
+        writer.writerow(["Numero de reserva", "DNI del cliente", "Habitacion", "Fecha de ingreso", "Fecha de egreso", "Cantidad de personas"])
+        for i in range(len(matriz)):
+            writer.writerow(matriz[i])
+
+def strtodatime(fecha):
+    fecha = fecha.split("/")
+    fecha = dt.datetime(int(fecha[2]), int(fecha[1]), int(fecha[0]))
+    return fecha
+
 # Menu principal
 def menuPOO():
     print("Bienvenido al Hotel Patagonia Oasis y Ocio.")
@@ -366,25 +417,30 @@ def menuPOO():
     if rta == 1:
         matriz=csvtomatriz("clientes.csv")
         # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
-        mail,contrasena=ingreso_usuario()
-        for i in range(len(matriz)):
-            if mail == matriz[i][3]:
-                if contrasena == matriz[i][4]:
-                    print("Ingreso exitoso")
-                    cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5],matriz[i][6])
-                    menu_cliente(cliente)
-                    pass
-                else:
-                    print("Contraseña incorrecta")
-                    mail,contrasena=ingreso_usuario()
-            elif i == len(matriz)-1:
-                print("Mail no registrado")
-                mail,contrasena=ingreso_usuario()
+        
+        while True:
+            mail = input("Ingrese su mail. Presione 0 para volver: ")
+            if mail == "0":
+                menuPOO()
+                break
+            else:
+                contrasena = input("Ingrese su contraseña: ")
+                print("")
+            
+            for i in range(len(matriz)):
+                if mail == matriz[i][3]:
+                    if contrasena == matriz[i][4]:
+                        print("Ingreso exitoso")
+                        cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5],matriz[i][6])
+                        menu_cliente(cliente)
+                        break
+            print("Mail o contraseña incorrectos. Intente nuevamente.")
+
     elif rta == 2:
-        mail,contrasena=ingreso_usuario()
+        
         menu_empleado()
     elif rta == 3:
-        mail,contrasena=ingreso_usuario()
+        
         menu_gerente()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -422,10 +478,11 @@ def menu_reservas(cliente):
     print("4. Volver atras")
     print("5. Salir")
     rta = validar_respuesta_menu(4)
+
     if rta == 1:
         reservas_actuales = []
         for i in range(len(cliente.reservas)):
-            if cliente.reservas[i].fecha_egr >= datetime.now():
+            if strtodatime(cliente.reservas[i].fecha_egr) >= dt.datetime.now():
                 reservas_actuales.append(cliente.reservas[i])
         
         if len(reservas_actuales) == 0:
@@ -438,6 +495,7 @@ def menu_reservas(cliente):
                 print(i+1, ". ", reservas_actuales[i])
             rta = validar_respuesta_menu(len(reservas_actuales))
             menu_reserva_actual(cliente, reservas_actuales[rta-1])
+
     elif rta == 2:
         menu_reservas_anteriores(cliente)
 
@@ -446,6 +504,7 @@ def menu_reservas(cliente):
 
     elif rta == 4:
         menu_cliente(cliente)
+
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
@@ -463,15 +522,16 @@ def menu_reserva_actual(cliente, reserva_actual):
             menu_reservas(cliente)
         
     else:
-        print("Reserva actual")
+        print("Su reserva actual es:")
+        print(reserva_actual)
+        print("")
         print("¿Qué desea hacer?")
-        print("1. Ver Reserva")
-        print("2. Modificar Reserva")
-        print("3. Cancelar Reserva")
-        print("4. Check In")
-        print("5. Check Out")
-        print("6. Volver atras")
-        print("7. Salir")
+        print("1. Modificar Reserva")
+        print("2. Cancelar Reserva")
+        print("3. Check In")
+        print("4. Check Out")
+        print("5. Volver atras")
+        print("6. Salir")
         rta = validar_respuesta_menu(7)
         if rta == 1:
             print("")
@@ -490,10 +550,6 @@ def menu_reserva_actual(cliente, reserva_actual):
             # método para hacer check in
             pass
         elif rta == 5:
-            print("")
-            # método para hacer check out
-            pass
-        elif rta == 6:
             menu_reservas(cliente)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -701,5 +757,6 @@ def recaudacion_diaria():
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
+
 
 menuPOO()

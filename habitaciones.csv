@@ -1,0 +1,14 @@
+habitacion;tipo;precio;max_personas;camas_ind;camas_mat;baño;balcon
+sim1;simple;100;1;1;0;compartido;no
+sim2;simple;100;1;1;0;compartido;no
+sim3;simple;100;1;1;0;compartido;no
+sim4;simple;100;1;1;0;compartido;no
+dob1;doble;200;2;0;1;compartido;no
+dob2;doble;200;2;0;1;compartido;no
+dob3;doble;200;2;0;1;compartido;no
+dob4;doble;200;2;0;1;compartido;no
+suit1;suite;300;2;0;1;privado;si
+suit2;suite;300;2;0;1;privado;si
+fam1;familiar;400;4;2;1;privado;si
+fam2;familiar;400;4;2;1;privado;si
+fam3;familiar;400;4;2;1;privado;si
