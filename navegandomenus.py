@@ -625,7 +625,12 @@ def menu_datos_personales(persona):
         # método para cambiar contraseña
         pass
     elif rta == 4:
-        menu_cliente()
+        if type(persona)==Cliente:
+            menu_cliente()
+        elif type(persona)==Empleado:
+            menu_empleado()
+        else:
+            menu_gerente()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()

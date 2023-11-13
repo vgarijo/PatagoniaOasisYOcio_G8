@@ -1,5 +1,5 @@
 '''
-def menu_datos_personales():
+def menu_datos_personales(persona):
     print("Personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
@@ -28,8 +28,29 @@ def menu_datos_personales():
 '''
 
 # en la clase Persona, agregar el siguiente método
+'''
+def __str__(self):
+    return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}"
+'''
+# en el menu_datos_personales donde dice "método para ver datos personales", pones un persona.__str__() para que se vean sus datos
 
-        #return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+# ___________________________________
+
+# en el menu_datos_personales donde dice "método para modificar datos personales", pones un persona.modificar_datos_personales() para que se abra el menú para modificar sus datos
+
+# ___________________________________
+
+# en el menu_datos_personales donde dice "método para cambiar contraseña", pones un persona.cambiar_password() para que se abra el menú para cambiar su contraseña
+
+
+
+
+
+
+'''
+
+'''
+
 
 
 
