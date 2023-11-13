@@ -56,7 +56,7 @@ class Cliente(Persona):
         matriz=csvtomatriz("reservas.csv")
         for i in range(len(matriz)):
             if self.DNI == matriz[i][1]:
-                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5]))
+                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6]))
         
         matriz=csvtomatriz("consumos.csv")
         for i in range(len(matriz)):
@@ -95,7 +95,6 @@ class Cliente(Persona):
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
 
-
     def modificar_reserva(self, reserva): ### este es el metodo de reservas, después hago el de cliente
         while True:
             print("¿Qué desea modificar?")
@@ -108,9 +107,9 @@ class Cliente(Persona):
             if rta == 1: #modificar habitacion
                 self.elegir_habitacion(reserva)
             elif rta == 2: #modificar cant de personas
-                pass
+                self.elegir_cantidad_personas(reserva)
             elif rta == 3: #modificar fecha de comienzo de reserva
-                pass
+                self.modificar_ingreso(reserva)
             elif rta == 4: #modificar fecha de salida
                 pass
             elif rta == 5:
@@ -144,17 +143,71 @@ class Cliente(Persona):
                     matriz=csvtomatriz("reservas.csv")
                     for i in range(len(matriz)):
                         if reserva.numero_res == matriz[i][0]:
-                            matriz[i][1] = habitacion
-                            matriz[i][2] = "simple"
+                            matriz[i][2] = habitacion
+                            matriz[i][3] = "simple"
                     matriztocsv("reservas.csv", matriz,"R")
                     print("Reserva confirmada.")
 
         if rta == 2:
             habitacion = self.chequear_disponibilidad("doble", reserva)
+            if habitacion != reserva.habitacion:
+                print("¿Desea confirmar la reserva?")
+                print("1. Si")
+                print("2. No")
+                rta = validar_respuesta_menu(2)
+
+                if rta == 1:
+                    reserva.habitacion = habitacion
+                    reserva.tipo = "doble"
+
+                    matriz=csvtomatriz("reservas.csv")
+                    for i in range(len(matriz)):
+                        if reserva.numero_res == matriz[i][0]:
+                            matriz[i][2] = habitacion
+                            matriz[i][3] = "doble"
+                    matriztocsv("reservas.csv", matriz,"R")
+                    print("Reserva confirmada.")
+                    print("")
         if rta == 3:
             habitacion = self.chequear_disponibilidad("suite", reserva)
+            if habitacion != reserva.habitacion:
+                print("¿Desea confirmar la reserva?")
+                print("1. Si")
+                print("2. No")
+                rta = validar_respuesta_menu(2)
+
+                if rta == 1:
+                    reserva.habitacion = habitacion
+                    reserva.tipo = "suite"
+
+                    matriz=csvtomatriz("reservas.csv")
+                    for i in range(len(matriz)):
+                        if reserva.numero_res == matriz[i][0]:
+                            matriz[i][2] = habitacion
+                            matriz[i][3] = "suite"
+                    matriztocsv("reservas.csv", matriz,"R")
+                    print("Reserva confirmada.")
+                    print("")
         if rta == 4:
             habitacion = self.chequear_disponibilidad("familiar", reserva)
+            if habitacion != reserva.habitacion:
+                print("¿Desea confirmar la reserva?")
+                print("1. Si")
+                print("2. No")
+                rta = validar_respuesta_menu(2)
+
+                if rta == 1:
+                    reserva.habitacion = habitacion
+                    reserva.tipo = "familiar"
+
+                    matriz=csvtomatriz("reservas.csv")
+                    for i in range(len(matriz)):
+                        if reserva.numero_res == matriz[i][0]:
+                            matriz[i][2] = habitacion
+                            matriz[i][3] = "familiar"
+                    matriztocsv("reservas.csv", matriz,"R")
+                    print("Reserva confirmada.")
+                    print("")
         if rta == 5:
             if reserva == None:
                 self.nuevareserva()
@@ -167,44 +220,146 @@ class Cliente(Persona):
         reservas = csvtomatriz("reservas.csv")
         habitaciones = csvtomatriz("habitaciones.csv")
 
-        # Borro de habitaciones las que no son del tipo seleccionado
+        # Agrego a filtradas las habitaciones del tipo seleccionado
+        habitaciones_filtradas = []
         for i in range(len(habitaciones)):
-            if habitaciones[i][1] != tipo:
-                habitaciones.pop(i)
+            if habitaciones[i][1] == tipo:
+                habitaciones_filtradas.append(habitaciones[i])
         
         #Agrego una columna a habitaciones que digan "disponible"
-        for i in range(len(habitaciones)):
-            habitaciones[i].append("disponible")
+        for i in range(len(habitaciones_filtradas)):
+            habitaciones_filtradas[i].append("disponible")
 
         # Chequeo que la cantidad de personas esté ok
-        if reserva.can_personas > int(habitaciones_desc[tipo][2]):
+        
+        # Busco la fila del tipo de habitación seleccionado
+        for i in range(len(habitaciones_desc)):
+            if habitaciones_desc[i][0] == tipo:
+                nro_tipo = i
+                break
+
+        if int(reserva.cant_personas) > int(habitaciones_desc[nro_tipo][2]):
             print("La cantidad de personas supera la capacidad máxima de la habitación.")
+            print("")
             return reserva.habitacion
         
         # Chequeo que el tipo de habitación sea distinto al actual
         if reserva.tipo == tipo:
             print("El tipo de habitación seleccionado es el misma que el actual.")
+            print("")
             return reserva.habitacion
         
         # Chequeo que haya alguna habitación del tipo nuevo disponible
-        for i in range(len(habitaciones)):
-            for i in range(len(reservas)):
-                if reservas[i][2] == habitaciones[i][0]:
-                    if strtodatime(reservas[i][3]) <= strtodatime(reserva.fecha_egr):
-                        if strtodatime(reservas[i][4]) >= strtodatime(reserva.fecha_ing):
-                            habitaciones[i][2] = "no disponible"
+        for i in range(len(habitaciones_filtradas)):
+            for j in range(len(reservas)):
+                if reservas[j][2] == habitaciones_filtradas[i][0]:
+                    if strtodatime(reservas[j][4]) <= strtodatime(reserva.fecha_egr):
+                        if strtodatime(reservas[j][5]) >= strtodatime(reserva.fecha_ing):
+                            habitaciones_filtradas[i][2] = "no disponible"
         
         # Recorro las habitaciones a ver si hay una disponible y asigno la primera que encuentre
-        for i in range(len(habitaciones)):
-            if habitaciones[i][2] == "disponible":
-                print("Habitación asignada:", habitaciones[i][0])
-                return habitaciones[i][0]
+        for i in range(len(habitaciones_filtradas)):
+            if habitaciones_filtradas[i][2] == "disponible":
+                print("Habitación asignada:", habitaciones_filtradas[i][0])
+                return habitaciones_filtradas[i][0]
         
         # Si no hay habitaciones disponibles, retorno la que haya estaba
         print("No hay habitaciones disponibles del tipo seleccionado.")
+        print("")
         return reserva.habitacion
 
+    def elegir_cantidad_personas(self, reserva):
+        habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
+        
+        # Cantidad máxima segun el tipo
+        for i in range(len(habitaciones_desc)):
+            if habitaciones_desc[i][0] == reserva.tipo:
+                cant_max = habitaciones_desc[i][2]
+                break
+        
+        # Pido la cantidad de personas
+        cant_personas = input("Ingrese la cantidad de personas. Presione 0 para cancelar: ")
+        
+        # Chequeo que sea un número
+        while not cant_personas.isdigit():
+            cant_personas = input("Cantidad no válida, ingrese otra. Presione 0 para cancelar: ")
 
+        if cant_personas == "0":
+            print("Cancelando...")
+            print("")
+        elif int(cant_personas) > int(cant_max):
+            print("La cantidad de personas supera la capacidad máxima de la habitación.")
+            print("")
+        else:
+            print("Cantidad de personas asignada:", cant_personas)
+            print("¿Desea confirmar la modificación?")
+            print("1. Si")
+            print("2. No")
+            rta = validar_respuesta_menu(2)
+            if rta == 1:
+                reserva.cant_personas = cant_personas
+                matriz=csvtomatriz("reservas.csv")
+                for i in range(len(matriz)):
+                    if reserva.numero_res == matriz[i][0]:
+                        matriz[i][6] = cant_personas
+                matriztocsv("reservas.csv", matriz,"R")
+                print("Modificación confirmada.")
+                print("")
+       
+    def modificar_ingreso(self, reserva):
+
+        ing_nuevo = validar_fec("Ingrese la nueva fecha de ingreso (DD/MM/AAAA): ")
+
+        # Chequeo que la fecha de ingreso sea posterior a la actual
+        if strtodatime(ing_nuevo) < dt.datetime.now():
+            print("La fecha de ingreso debe ser posterior a la actual.")
+        else:
+            habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
+            reservas = csvtomatriz("reservas.csv")
+            habitaciones = csvtomatriz("habitaciones.csv")
+
+            # Agrego a filtradas las habitaciones del tipo seleccionado
+            habitaciones_filtradas = []
+            for i in range(len(habitaciones)):
+                if habitaciones[i][1] == reserva.tipo:
+                    habitaciones_filtradas.append(habitaciones[i])
+            
+            #Agrego una columna a habitaciones que digan "disponible"
+            for i in range(len(habitaciones_filtradas)):
+                habitaciones_filtradas[i].append("disponible")
+            
+            # Chequeo que haya alguna disponible
+            for i in range(len(habitaciones_filtradas)):
+                for j in range(len(reservas)):
+                    if reservas[j][2] == habitaciones_filtradas[i][0] and reservas[j][0] != reserva.numero_res:
+                        if strtodatime(reservas[j][4]) <= strtodatime(reserva.fecha_egr):
+                            if strtodatime(reservas[j][5]) >= strtodatime(ing_nuevo):
+                                habitaciones_filtradas[i][2] = "no disponible"
+            
+            # Recorro las habitaciones a ver si hay una disponible y asigno la primera que encuentre
+            for i in range(len(habitaciones_filtradas)):
+                if habitaciones_filtradas[i][2] == "disponible":
+                    print("Habitación asignada:", habitaciones_filtradas[i][0])
+                    print("¿Desea confirmar la reserva?")
+                    print("1. Si")
+                    print("2. No")
+                    rta = validar_respuesta_menu(2)
+                    if rta == 1:
+                        reserva.habitacion = habitaciones_filtradas[i][0]
+                        reserva.fecha_ing = ing_nuevo
+                        matriz=csvtomatriz("reservas.csv")
+                        for j in range(len(matriz)):
+                            if reserva.numero_res == matriz[i][0]:
+                                matriz[j][2] = habitaciones_filtradas[i][0]
+                                matriz[j][4] = ing_nuevo
+                        matriztocsv("reservas.csv", matriz,"R")
+                        print("Reserva confirmada.")
+                        break
+                    
+            
+            # Si no hay habitaciones disponibles, retorno la que haya estaba
+            print("No hay habitaciones disponibles para la fecha asignada.")
+            print("")
 
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
@@ -299,7 +454,7 @@ class Reserva():
         self.cant_personas = cant_personas
 
     def __str__(self) -> str:
-        return f"Numero de reserva: {self.numero_res}\nDNI del cliente: {self.dni_cliente}\nHabitacion: {self.habitacion}\nFecha de ingreso: {self.fecha_ing}\nFecha de egreso: {self.fecha_egr}\nCantidad de personas: {self.cant_personas}"   
+        return f"Numero de reserva: {self.numero_res}\nDNI del cliente: {self.dni_cliente}\nHabitacion: {self.habitacion}\nTipo: {self.tipo}\nFecha de ingreso: {self.fecha_ing}\nFecha de egreso: {self.fecha_egr}\nCantidad de personas: {self.cant_personas}"   
 
 class Consumo():
     def __init__(self, nro_pedido, cliente, fecha, item, precio):
@@ -616,7 +771,7 @@ def menuPOO():
                         print("Ingreso exitoso")
                         cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6])
                         menu_cliente(cliente)
-                        break
+                        exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     elif rta == 2:
@@ -755,8 +910,7 @@ def menu_reserva_actual(cliente, reserva_actual):
         print("6. Salir")
         rta = validar_respuesta_menu(7)
         if rta == 1:
-            print("")
-            # método para ver reserva actual
+            cliente.modificar_reserva(reserva_actual)
             pass
         elif rta == 2:
             print("")
