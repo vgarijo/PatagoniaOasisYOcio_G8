@@ -56,7 +56,7 @@ class Cliente(Persona):
         matriz=csvtomatriz("reservas.csv")
         for i in range(len(matriz)):
             if self.DNI == matriz[i][1]:
-                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8]),matriz[i][9],matriz[i][10])
+                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8],matriz[i][9],matriz[i][10]))
         
         matriz=csvtomatriz("consumos.csv")
         for i in range(len(matriz)):
@@ -1185,9 +1185,9 @@ def menu_reserva_actual(cliente, reserva_actual):
             cliente.cancelar_reserva(reserva_actual)
             pass
         elif rta == 3:
-            cliente.checkin_reserva(reserva_actual)
+            cliente.checkin(reserva_actual)
         elif rta == 4:
-            cliente.checkout_reserva(reserva_actual)
+            cliente.checkout(reserva_actual)
                 
         elif rta == 5:
             menu_reservas(cliente)
