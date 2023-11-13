@@ -1339,7 +1339,7 @@ def menu_administracion_personal():
 
     if rta == 1:
         # ver empleados
-        for i in range(lista_empleados):
+        for i in range(len(lista_empleados)):
             print(lista_empleados[i])
             print('\n')
         
