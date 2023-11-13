@@ -29,7 +29,7 @@ def menu_datos_personales():
 
 # en la clase Persona, agregar el siguiente método
 
-        return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
+        #return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nContraseña: {self.password}\nFecha de nacimiento: {self.fec_nac}\nTipo: {self.tipo}\nReservas: {self.reservas}\nConsumos: {self.consumos}"
 
 
 

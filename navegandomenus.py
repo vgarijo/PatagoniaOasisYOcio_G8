@@ -606,7 +606,7 @@ def menu_consumos():
     print("")
 
 # Menu datos personales
-def menu_datos_personales(cliente):
+def menu_datos_personales(persona):
     print("Personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
@@ -633,7 +633,7 @@ def menu_datos_personales(cliente):
     print("")
 
 # Menu empleado
-def menu_empleado():
+def menu_empleado(empleado):
     print("Bienvenido al menu de empleado")
     print("¿Qué desea hacer?")
     print("1. Ingreso")
@@ -647,7 +647,7 @@ def menu_empleado():
     if rta == 2:
         print("Egreso efectuado")
     if rta == 3:
-        menu_datos_personales()
+        menu_datos_personales(empleado)
     if rta == 4:
         menuPOO()
     else:
@@ -655,7 +655,7 @@ def menu_empleado():
         exit()
 
 # Menu gerente
-def menu_gerente():
+def menu_gerente(gerente):
     print("Bienvenido al menu de gerente")
     print("¿Qué desea hacer?")
     print("1. Ingreso")
@@ -671,7 +671,7 @@ def menu_gerente():
     if rta == 2:
         print("Egreso efectuado")
     if rta == 3:
-        menu_datos_personales()
+        menu_datos_personales(gerente)
     if rta == 4:
         menu_administracion_personal()
     if rta == 5:
