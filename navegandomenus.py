@@ -122,7 +122,7 @@ class Cliente(Persona):
                         matriz[i][3] = reserva.fecha_ing
                         matriz[i][4] = reserva.fecha_egr
                         matriz[i][5] = reserva.cant_personas
-                matriztocsv("reservas.csv", matriz)
+                matriztocsv("reservas.csv", matriz,"R")
 
             else:
                 menu_reservas()
@@ -187,7 +187,6 @@ class Empleado(Persona):
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
 
-
 class Gerente(Empleado):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
@@ -226,7 +225,7 @@ class Gerente(Empleado):
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
-
+        
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, fecha_ing, fecha_egr, cant_personas):
         self.dni_cliente = dni_cliente
@@ -536,7 +535,7 @@ def menuPOO():
     print("4. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        matriz=csvtomatriz("clientes.csv")
+        matriz_clientes=csvtomatriz("clientes.csv")
         # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
         
         while True:
@@ -548,21 +547,59 @@ def menuPOO():
                 contrasena = input("Ingrese su contraseña: ")
                 print("")
             
-            for i in range(len(matriz)):
-                if mail == matriz[i][3]:
-                    if contrasena == matriz[i][4]:
+            for i in range(len(matriz_clientes)):
+                if mail == matriz_clientes[i][3]:
+                    if contrasena == matriz_clientes[i][4]:
                         print("Ingreso exitoso")
-                        cliente = Cliente(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4], matriz[i][5],matriz[i][6])
+                        cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6])
                         menu_cliente(cliente)
                         break
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     elif rta == 2:
+        matriz_empleados=csvtomatriz("empleados.csv")
+        # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
         
-        menu_empleado() #falta poner al empleado como parámetro, necesitamos poner una validación como hicimos en cliente ((lo mismo hay que hacer en gerente))
+        while True:
+            mail = input("Ingrese su mail. Presione 0 para volver: ")
+            if mail == "0":
+                menuPOO()
+                break
+            else:
+                contrasena = input("Ingrese su contraseña: ")
+                print("")
+            
+            for i in range(len(matriz_empleados)):
+                if mail == matriz_empleados[i][3]:
+                    if contrasena == matriz_empleados[i][4]:
+                        print("Ingreso exitoso")
+                        empleado = Empleado(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
+                        menu_empleado(empleado)
+                        break
+            print("Mail o contraseña incorrectos. Intente nuevamente.")
+
     elif rta == 3:
+        matriz_empleados=csvtomatriz("empleados.csv")
+        # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
         
-        menu_gerente()
+        while True:
+            mail = input("Ingrese su mail. Presione 0 para volver: ")
+            if mail == "0":
+                menuPOO()
+                break
+            else:
+                contrasena = input("Ingrese su contraseña: ")
+                print("")
+            
+            for i in range(len(matriz_empleados)):
+                if mail == matriz_empleados[i][3]:
+                    if contrasena == matriz_empleados[i][4] and matriz_empleados[i][6] == "gerente":
+                        print("Ingreso exitoso")
+                        gerente = Gerente(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
+                        menu_gerente(gerente)
+                        break
+            print("Mail o contraseña incorrectos. Intente nuevamente.")
+
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
@@ -598,7 +635,7 @@ def menu_reservas(cliente):
     print("3. Nueva Reserva")
     print("4. Volver atras")
     print("5. Salir")
-    rta = validar_respuesta_menu(4)
+    rta = validar_respuesta_menu(5)
 
     if rta == 1:
         reservas_actuales = []
@@ -702,7 +739,6 @@ def menu_nueva_reserva():
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
 
-
 # Menu consumos
 def menu_consumos():
     print("Consumos")
@@ -735,7 +771,7 @@ def menu_datos_personales(persona):
     print("3. Cambiar Contraseña")
     print("4. Volver atras")
     print("5. Salir")
-    rta = validar_respuesta_menu(4)
+    rta = validar_respuesta_menu(5)
     if rta == 1:
         print(persona)
     
@@ -824,6 +860,7 @@ def menu_administracion_personal():
     rta = validar_respuesta_menu(6)
     matriz_empleados=csvtomatriz("empleados.csv")
     lista_empleados=stringAempleado(matriz_empleados)
+
     if rta == 1:
         # ver empleados
         for i in range(lista_empleados):
@@ -831,7 +868,7 @@ def menu_administracion_personal():
             print('\n')
         
     if rta == 2:
-        # método para agregar empleado
+        # Agregar empleado
         print('Ingrese los datos del nuevo empleado:')
         print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
         nombre=input("Nombre del empleado: ")
@@ -847,7 +884,7 @@ def menu_administracion_personal():
         matriztocsv("empleados.csv",matriz_empleados,"E")
         
     if rta == 3:
-        # método para modificar empleado
+        # Modificar empleado
         dni_requerido=validar_dni()
         for empleado in lista_empleados:
             if empleado.DNI==dni_requerido:
@@ -858,7 +895,7 @@ def menu_administracion_personal():
                         matriztocsv("empleados.csv",matriz_empleados,"E")
 
     if rta == 4:
-        # método para eliminar empleado
+        # Eliminar empleado
         dni_requerido=validar_dni()
         for i in range(len(matriz_empleados)):
                     if dni_requerido==matriz_empleados[i][2]:
