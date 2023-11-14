@@ -1358,7 +1358,7 @@ def menuPOO():
             cliente.password = input("Contraseña: ")
             cliente.fec_nac = validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA): ")
             cliente.gastos = "0"
-            cliente.tipo = "básico"
+            cliente.tipo = "basico"
 
             print("¿Desea confirmar su registro?")
             print(cliente)
