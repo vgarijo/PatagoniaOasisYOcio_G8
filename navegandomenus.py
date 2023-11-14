@@ -830,14 +830,15 @@ class Empleado(Persona):
     def ingreso_egreso(self,tipo): # "I" ingreso y "E" egreso
         matriz_ingresos_egresos=csvtomatriz("ingresos_egresos.csv")
         if tipo=="I":
-            matriz_ingresos_egresos.append([len(matriz_ingresos_egresos)+1,self.DNI,dt.datetime.today().strftime("%d/%m/%Y"),dt.datetime.now().strftime("%H:%M"),None])
-        else: 
+            matriz_ingresos_egresos.append([(len(matriz_ingresos_egresos)+1),self.DNI,dt.datetime.today().strftime("%d/%m/%Y"),dt.datetime.now().strftime("%H:%M"),None])
+            matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
+        elif tipo=="E": 
             for i in range(len(matriz_ingresos_egresos)):
                 if self.DNI==matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][1]:
                     hora_egreso=validar_hora_egreso(matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][3])
                     matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][4]=hora_egreso
+                    matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
                     break
-            matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
 
 
 
