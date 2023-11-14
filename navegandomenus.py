@@ -37,12 +37,12 @@ class Cliente(Persona):
         matriz=csvtomatriz("reservas.csv")
         for i in range(len(matriz)):
             if self.DNI == matriz[i][1]:
-                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8],matriz[i][9],matriz[i][10]))
+                self.reservas.append(Reserva(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5], matriz[i][6],matriz[i][7],matriz[i][8],matriz[i][9],matriz[i][10],matriz[i][11]))
         
         matriz=csvtomatriz("consumos.csv")
         for i in range(len(matriz)):
             if self.DNI == matriz[i][1]:
-                self.consumos.append(Consumo(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4]))
+                self.consumos.append(Consumo(matriz[i][0], matriz[i][1], matriz[i][2], matriz[i][3], matriz[i][4],matriz[i][5]))
     
     def __str__(self) -> str:
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nGastos:{self.gastos}\nTipo: {self.tipo}\n\nReservas:\n{self.reservas}\n\nConsumos:\n{self.consumos}"
@@ -727,6 +727,73 @@ class Cliente(Persona):
 
         menu_reservas(self) 
 
+    def consumir(self):
+        
+        consumo = Consumo(None, self.DNI, dt.datetime.today().strftime("%d/%m/%Y"), None, None, None)
+
+        consumiciones = csvtomatriz("consumiciones.csv")
+
+        print("¿Qué desea consumir?")
+        print("1. Bebida")
+        print("2. Comida")
+        print("3. Postre")
+        print("4. Volver")
+        rta = validar_respuesta_menu(4)
+        
+        if rta == 1:
+            consumo.item = "bebida"
+            for i in consumiciones:
+                if i[0] == "bebida":
+                    precio = int(i[1])
+        elif rta == 2:
+            consumo.item = "comida"
+            for i in consumiciones:
+                if i[0] == "comida":
+                    precio = int(i[1])
+        elif rta == 3:
+            consumo.item = "postre"
+            for i in consumiciones:
+                if i[0] == "postre":
+                    precio = int(i[1])
+        
+        if rta < 4:
+            cantidad = input("Ingrese la cantidad: ")
+            while not cantidad.isdigit():
+                cantidad = input("Cantidad no válida, ingrese otra: ")
+            consumo.cantidad = cantidad
+            consumo.precio = str(precio * int(cantidad))
+
+            print ("¿Desea confirmar el consumo?")
+            print("1. Si")
+            print("2. No")
+
+            rta = validar_respuesta_menu(2)
+
+            if rta == 1:
+
+                matriz=csvtomatriz("consumos.csv")
+                consumo.numero_pedido = str(int(matriz[-1][0]) + 1)
+
+                matriz.append([consumo.numero_pedido, consumo.cliente, consumo.fecha, consumo.item, consumo.cantidad, consumo.precio])
+                matriztocsv("consumos.csv", matriz,"Con")
+
+                matriz = csvtomatriz("clientes.csv")
+                for i in range(len(matriz)):
+                    if self.DNI == matriz[i][2]:
+                        self.gastos = str(int(self.gastos) + int(consumo.precio))
+                        matriz[i][6] = str(int(matriz[i][6]) + int(consumo.precio))
+
+                matriztocsv("clientes.csv", matriz,"Cl")
+
+                print("Consumo confirmado.")
+                print("")
+
+            else:
+                print("Cancelando...")
+                print("")
+        
+        menu_consumos(self)
+
 class Empleado(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
@@ -917,7 +984,7 @@ class Gerente(Empleado):
             exit()
         
 class Reserva():
-    def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout):
+    def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout,precio):
         self.dni_cliente = dni_cliente
         self.habitacion = habitacion
         self.tipo = tipo
@@ -929,20 +996,22 @@ class Reserva():
         self.checkout = checkout
         self.horario_checkin = horario_checkin
         self.horario_checkout = horario_checkout
+        self.precio = precio
 
     def __str__(self) -> str:
-        return f"Numero de reserva: {self.numero_res}\nDNI del cliente: {self.dni_cliente}\nHabitacion: {self.habitacion}\nTipo: {self.tipo}\nFecha de ingreso: {self.fecha_ing}\nFecha de egreso: {self.fecha_egr}\nCantidad de personas: {self.cant_personas}\nCheckin: {self.checkin}\nCheckout: {self.checkout}\nHorario de checkin: {self.horario_checkin}\nHorario de checkout: {self.horario_checkout}"   
+        return f"Numero de reserva: {self.numero_res}\nDNI del cliente: {self.dni_cliente}\nHabitacion: {self.habitacion}\nTipo: {self.tipo}\nFecha de ingreso: {self.fecha_ing}\nFecha de egreso: {self.fecha_egr}\nCantidad de personas: {self.cant_personas}\nCheckin: {self.checkin}\nCheckout: {self.checkout}\nHorario de checkin: {self.horario_checkin}\nHorario de checkout: {self.horario_checkout}\nPrecio: ${self.precio}"   
 
 class Consumo():
-    def __init__(self, nro_pedido, cliente, fecha, item, precio):
+    def __init__(self, nro_pedido, cliente, fecha, item, cantidad,precio):
         self.numero_pedido = nro_pedido
         self.cliente = cliente
         self.fecha = fecha
         self.item = item
+        self.cantidad = cantidad
         self.precio = precio
     
     def __str__(self) -> str:
-        return f"Numero de pedido: {self.numero_pedido}\nCliente: {self.cliente}\nFecha: {self.fecha}\nItem: {self.item}\nPrecio: {self.precio}"
+        return f"Numero de pedido: {self.numero_pedido}\nCliente: {self.cliente}\nFecha: {self.fecha}\nItem: {self.item}\nCantidad: {self.cantidad}\nPrecio: ${self.precio}"
 
 class Nodo(): # Nodo de la lista enlazada
     def __init__(self,dato=None,prox=None): # Constructor de la clase
@@ -1205,19 +1274,19 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
     elif tipo=="E":
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Area", "Estado"])
+            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Password", "Fecha de Nacimiento", "Area", "Estado"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
     elif tipo=="Con":
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow(["Numero de pedido", "DNI del cliente", "Fecha", "Item", "Precio"])
+            writer.writerow(["Numero de pedido", "DNI del cliente", "Fecha", "Item", "Cantidad","Precio"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
     elif tipo=="Cl":
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Gastos", "Tipo"])
+            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Password", "Fecha de Nacimiento", "Gastos", "Tipo"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
 
@@ -1446,10 +1515,11 @@ def menu_consumos(cliente):
     print("4. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        # método para visualizar historial de consumos
+        print(cliente.consumos)
+        menu_consumos(cliente)
         pass
     elif rta == 2:
-        # método para hacer un nuevo consumo
+        cliente.consumir()
         pass
     elif rta == 3:
         menu_cliente()
@@ -1522,7 +1592,7 @@ def menu_gerente(gerente):
     print("3. Datos Personales")
     print("4. Administración de personal")
     print("5. Estadísticas")
-    print("6. Actualizar tipo de empleados")
+    print("6. Actualizar tipo de clientes")
     print("7. Volver atras")
     print("8. Salir")
     rta = validar_respuesta_menu(8)
