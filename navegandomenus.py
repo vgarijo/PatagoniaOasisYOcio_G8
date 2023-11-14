@@ -15,35 +15,15 @@ class Persona:
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}"
 
-
-    def modificar_datos_personales(self):
-        print("¿Qué dato desea modificar?")
-        print("1. Nombre")
-        print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Fecha de nacimiento")
-        rta=validar_respuesta_menu(5)
-        if rta == 1:
-            self.nombre=input("Ingrese su nuevo nombre: ")
-        elif rta == 2:
-            self.apellido=input("Ingrese su nuevo apellido: ")
-        elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
-            self.mail = validar_mail()
-        elif rta == 5:
-            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
-
     def cambiar_password(self):
         act = input("Ingrese su contraseña actual: ")
         while act != self.password:
             print("Contraseña incorrecta")
             act = input("Ingrese su contraseña actual. Presione 0 para salir: ")
             if act == "0":
-                break
+                return self.password
         nueva = input("Ingrese su nueva contraseña: ")
-        self.password = nueva
+        return nueva
 
 class Cliente(Persona):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, gastos,tipo):
@@ -71,33 +51,63 @@ class Cliente(Persona):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Volver atras")
-        print("8. Salir")
-        rta=validar_respuesta_menu(8)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Volver atras")
+        print("7. Salir")
+        rta=validar_respuesta_menu(7)
+        
+        matriz_cliente = csvtomatriz("clientes.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
-        elif rta == 6:
             self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
-        elif rta == 7: 
-            menu_cliente()
+            for i in range(len(matriz_cliente)):
+                if self.DNI == matriz_cliente[i][2]:
+                    matriz_cliente[i][5] = self.fec_nac            
+        
+        if rta < 6:
+            matriztocsv("clientes.csv", matriz_cliente,"Cl")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        elif rta == 6: 
+            menu_datos_personales(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
 
     def modificar_reserva(self, reserva): ### este es el metodo de reservas, después hago el de cliente
         while True:
+
+            habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
+            for i in range(len(habitaciones_desc)):
+                if habitaciones_desc[i][0] == reserva.tipo:
+                    precio = int(habitaciones_desc[i][1])
+                    break
+            
+            costo_actual = precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days
+
             print("¿Qué desea modificar?")
             print("1. Habitacion:", reserva.habitacion, "Tipo:", reserva.tipo)
             print("2. Cantidad de personas:", reserva.cant_personas)
@@ -106,17 +116,17 @@ class Cliente(Persona):
             print("5. Volver atras")
             rta = validar_respuesta_menu(5)
             if rta == 1: #modificar habitacion
-                self.elegir_habitacion(reserva)
+                self.elegir_habitacion(reserva,costo_actual)
             elif rta == 2: #modificar cant de personas
                 self.elegir_cantidad_personas(reserva)
             elif rta == 3: #modificar fecha de comienzo de reserva
-                self.modificar_ingreso(reserva)
+                self.modificar_ingreso(reserva,costo_actual)
             elif rta == 4: #modificar fecha de salida
-                self.modificar_egreso(reserva)
+                self.modificar_egreso(reserva,costo_actual)
             elif rta == 5:
                 menu_reserva_actual(self, reserva)
         
-    def elegir_habitacion(self, reserva):
+    def elegir_habitacion(self, reserva, costo_actual):
 
         habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
 
@@ -147,8 +157,21 @@ class Cliente(Persona):
                             matriz[i][2] = habitacion
                             matriz[i][3] = "simple"
                     matriztocsv("reservas.csv", matriz,"R")
-                    print("Reserva confirmada.")
 
+                    for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+
+                    matriz=csvtomatriz("clientes.csv")
+                    for i in range(len(matriz)):
+                        if self.DNI == matriz[i][2]:
+                            self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                            matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                    matriztocsv("clientes.csv", matriz,"Cl")
+
+                    print("Reserva confirmada.")
+                    print("")
         if rta == 2:
             habitacion = self.chequear_disponibilidad("doble", reserva)
             if habitacion != reserva.habitacion:
@@ -167,6 +190,19 @@ class Cliente(Persona):
                             matriz[i][2] = habitacion
                             matriz[i][3] = "doble"
                     matriztocsv("reservas.csv", matriz,"R")
+
+                    for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+
+                    matriz=csvtomatriz("clientes.csv")
+                    for i in range(len(matriz)):
+                        if self.DNI == matriz[i][2]:
+                            self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                            matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                    matriztocsv("clientes.csv", matriz,"Cl")
+                    
                     print("Reserva confirmada.")
                     print("")
         if rta == 3:
@@ -187,6 +223,19 @@ class Cliente(Persona):
                             matriz[i][2] = habitacion
                             matriz[i][3] = "suite"
                     matriztocsv("reservas.csv", matriz,"R")
+
+                    for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+
+                    matriz=csvtomatriz("clientes.csv")
+                    for i in range(len(matriz)):
+                        if self.DNI == matriz[i][2]:
+                            self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                            matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                    matriztocsv("clientes.csv", matriz,"Cl")
+
                     print("Reserva confirmada.")
                     print("")
         if rta == 4:
@@ -207,6 +256,19 @@ class Cliente(Persona):
                             matriz[i][2] = habitacion
                             matriz[i][3] = "familiar"
                     matriztocsv("reservas.csv", matriz,"R")
+
+                    for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+
+                    matriz=csvtomatriz("clientes.csv")
+                    for i in range(len(matriz)):
+                        if self.DNI == matriz[i][2]:
+                            self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                            matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                    matriztocsv("clientes.csv", matriz,"Cl")
+
                     print("Reserva confirmada.")
                     print("")
         if rta == 5:
@@ -304,7 +366,7 @@ class Cliente(Persona):
                 print("Modificación confirmada.")
                 print("")
        
-    def modificar_ingreso(self, reserva):
+    def modificar_ingreso(self, reserva,costo_actual):
 
         ing_nuevo = validar_fec("Ingrese la nueva fecha de ingreso (DD/MM/AAAA): ")
 
@@ -364,7 +426,7 @@ class Cliente(Persona):
             print("No hay habitaciones disponibles para la fecha asignada.")
             print("")
 
-    def modificar_egreso(self, reserva):
+    def modificar_egreso(self, reserva,costo_actual):
         
         egr_nuevo = validar_fec("Ingrese la nueva fecha de egreso (DD/MM/AAAA): ")
 
@@ -416,8 +478,23 @@ class Cliente(Persona):
                                 matriz[j][2] = habitaciones_filtradas[i][0]
                                 matriz[j][5] = egr_nuevo
                         matriztocsv("reservas.csv", matriz,"R")
-                        print("Reserva confirmada.")
-                        break
+
+                    habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
+                    for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+
+                    matriz=csvtomatriz("clientes.csv")
+                    for i in range(len(matriz)):
+                        if self.DNI == matriz[i][2]:
+                            self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                            matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                    matriztocsv("clientes.csv", matriz,"Cl")
+
+                    print("Reserva confirmada.")
+                    self.modificar_reserva(reserva)
+                    exit()
                     
             
             # Si no hay habitaciones disponibles, retorno la que haya estaba
@@ -495,6 +572,22 @@ class Cliente(Persona):
         print("2. No")
         rta = validar_respuesta_menu(2)
         if rta == 1:
+
+            habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
+
+            # Calculo el precio según el tipo de res
+            for i in range (len(habitaciones_desc)):
+                if habitaciones_desc[i][0] == reserva.tipo:
+                    precio = int(habitaciones_desc[i][1])
+                    break
+
+            matriz=csvtomatriz("clientes.csv")
+            for i in range(len(matriz)):
+                if self.DNI == matriz[i][2]:
+                    self.gastos = str(int(self.gastos) - precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days)
+                    matriz[i][6] = str(int(matriz[i][6]) - precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days)
+            matriztocsv("clientes.csv", matriz,"Cl")
+
             matriz=csvtomatriz("reservas.csv")
             matriz_nueva = []
             for i in range(len(matriz)):
@@ -512,7 +605,7 @@ class Cliente(Persona):
         print("Iniciando una nueva reserva...")
         print("")
         
-        nueva_reserva = Reserva(None, self.DNI, None, None, None, None, None, None, None)
+        nueva_reserva = Reserva(None, self.DNI, None, None, None, None, None, None, None, None, None)
 
         reservas=csvtomatriz("reservas.csv")
         nueva_reserva.numero_res = str(int(reservas[-1][0]) + 1)
@@ -621,6 +714,13 @@ class Cliente(Persona):
                             matriz.append([nueva_reserva.numero_res, nueva_reserva.dni_cliente, nueva_reserva.habitacion, nueva_reserva.tipo, nueva_reserva.fecha_ing, nueva_reserva.fecha_egr, nueva_reserva.cant_personas, "no", "no","no","no"])
                             matriztocsv("reservas.csv", matriz,"R")
                             print("Reserva confirmada.")
+
+                            matriz=csvtomatriz("clientes.csv")
+                            for j in range(len(matriz)):
+                                if self.DNI == matriz[j][2]:
+                                    self.gastos = str(int(self.gastos) + int(habitaciones_desc[i][1]) * (strtodatime(nueva_reserva.fecha_egr) - strtodatime(nueva_reserva.fecha_ing)).days)
+                                    matriz[j][6] = str(int(matriz[j][6]) + int(habitaciones_desc[i][1]) * (strtodatime(nueva_reserva.fecha_egr) - strtodatime(nueva_reserva.fecha_ing)).days)
+                            matriztocsv("clientes.csv", matriz,"Cl")
                             print("")
                             menu_reservas(self)
                             break          
@@ -639,32 +739,45 @@ class Empleado(Persona):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Area")
-        print("8. Estado")
-        print("9. Volver atras")
-        print("10. Salir")
-        rta=validar_respuesta_menu(10)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Volver atras")
+        print("7. Salir")
+        rta=validar_respuesta_menu(7)
+        matriz_empleados = csvtomatriz("empleados.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
-        elif rta == 6:
-            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
-        elif rta == 7:
-            self.area = input("Ingrese su nueva area: ")
-        elif rta == 8:
-            self.activo = input("Ingrese su nuevo estado: ")
-        elif rta == 9: 
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][5] = self.fec_nac
+        if rta < 6:
+            matriztocsv("empleados.csv", matriz_empleados,"E")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        elif rta == 6: 
             menu_empleado()
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -678,33 +791,127 @@ class Gerente(Empleado):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
-        print("3. DNI")
-        print("4. Mail")
-        print("5. Contraseña")
-        print("6. Fecha de nacimiento")
-        print("7. Area")
-        print("8. Estado")
-        print("9. Volver atras")
-        print("10. Salir")
-        rta=validar_respuesta_menu(10)
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Area")
+        print("7. Estado")
+        print("8. Volver atras")
+        print("9. Salir")
+        rta=validar_respuesta_menu(9)
+        matriz_empleados = csvtomatriz("empleados.csv")
+
         if rta == 1:
             self.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][0] = self.nombre
         elif rta == 2:
             self.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.apellido
         elif rta == 3:
-            self.DNI = validar_dni()
-        elif rta == 4:
             self.mail = validar_mail()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][3] = self.mail
+        elif rta == 4:
+            password=self.cambiar_password()
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][4] = password
         elif rta == 5:
-            self.cambiar_password()
+            self.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][5] = self.fec_nac
         elif rta == 6:
-            self.fec_nac=validar_fec("Ingrese la fecha de nacimiento (DD/MM/AAAA):")
+            self.area=input("Ingrese su nueva area de trabajo: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][6] = self.area
         elif rta == 7:
-            self.area = input("Ingrese su nueva area: ")
-        elif rta == 8:
-            self.activo = input("Ingrese su nuevo estado: ")
-        elif rta == 9: 
-            menu_gerente()
+            self.activo=input("Ingrese su nuevo status: ")
+            for i in range(len(matriz_empleados)):
+                if self.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = self.activo
+        
+        if rta < 8:
+            matriztocsv("empleados.csv", matriz_empleados,"E")
+            print("Modificación realizada.")
+            print("")
+            self.modificar_datos_personales()
+        
+        elif rta == 8: 
+            menu_gerente(self)
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+    
+    def actualizar_status(self):
+        print("")
+
+
+    def modificarEmpleado(self,empleado):
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Apellido")
+        print("3. Mail")
+        print("4. Contraseña")
+        print("5. Fecha de nacimiento")
+        print("6. Area")
+        print("7. Estado")
+        print("8. Volver atras")
+        print("9. Salir")
+        rta=validar_respuesta_menu(9)
+        matriz_empleados = csvtomatriz("empleados.csv")
+
+        if rta == 1:
+            empleado.nombre=input("Ingrese su nuevo nombre: ")
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][0] = empleado.nombre
+        elif rta == 2:
+            empleado.apellido=input("Ingrese su nuevo apellido: ")
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][1] = empleado.apellido
+        elif rta == 3:
+            empleado.mail = validar_mail()
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][3] = empleado.mail
+        elif rta == 4:
+            password=empleado.cambiar_password()
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][4] = password
+        elif rta == 5:
+            empleado.fec_nac=validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA):")
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][5] = empleado.fec_nac
+            
+        elif rta == 6:
+            empleado.area=input("Ingrese su nueva area de trabajo: ")
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                        matriz_empleados[i][6] = empleado.area
+        elif rta == 7:
+            empleado.activo=input("Ingrese su nuevo status: ")
+            for i in range(len(matriz_empleados)):
+                if empleado.DNI == matriz_empleados[i][2]:
+                    matriz_empleados[i][1] = empleado.activo
+            
+        if rta < 8:
+            matriztocsv("empleados.csv", matriz_empleados,"E")
+            print("Modificación realizada.")
+            print("")
+            empleado.modificar_datos_personales()
+            
+        elif rta == 8: 
+            menu_gerente(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
@@ -1008,6 +1215,18 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
             writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Area", "Estado"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
+    elif tipo=="Con":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Numero de pedido", "DNI del cliente", "Fecha", "Item", "Precio"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
+    elif tipo=="Cl":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Contraseña", "Fecha de Nacimiento", "Gastos", "Tipo"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
 
 def strtodatime(fecha):
     fecha = fecha.split("/")
@@ -1055,7 +1274,7 @@ def menuPOO():
                     if contrasena == matriz_clientes[i][4]:
                         print("Ingreso exitoso")
                         cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
-                        menu_cliente(cliente),
+                        menu_cliente(cliente)
                         exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
@@ -1078,7 +1297,7 @@ def menuPOO():
                         print("Ingreso exitoso")
                         empleado = Empleado(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_empleado(empleado)
-                        break
+                        exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     elif rta == 3:
@@ -1100,7 +1319,7 @@ def menuPOO():
                         print("Ingreso exitoso")
                         gerente = Gerente(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_gerente(gerente)
-                        break
+                        exit()
             print("Mail o contraseña incorrectos. Intente nuevamente.")
 
     else:
@@ -1233,7 +1452,7 @@ def menu_reservas_anteriores(cliente):
         exit()
 
 # Menu consumos
-def menu_consumos():
+def menu_consumos(cliente):
     print("Consumos")
     print("¿Qué desea hacer?")
     print("1. Historial de Consumos")
@@ -1256,33 +1475,30 @@ def menu_consumos():
     print("")
 
 # Menu datos personales
-def menu_datos_personales(cliente):
+def menu_datos_personales(persona):
     print("Datos personales")
     print("¿Qué desea hacer?")
     print("1. Ver Datos Personales")
     print("2. Modificar Datos Personales")
-    print("3. Cambiar Contraseña")
-    print("4. Volver atras")
-    print("5. Salir")
-    rta = validar_respuesta_menu(5)
+    print("3. Volver atras")
+    print("4. Salir")
+    rta = validar_respuesta_menu(4)
     if rta == 1:
-        print(cliente)
-        menu_datos_personales(cliente)
+        print(persona)
+        print("")
+        menu_datos_personales(persona)
     elif rta == 2:
-        cliente.modificar_datos_personales()
-        
+        persona.modificar_datos_personales()
+
     elif rta == 3:
-        persona.cambiar_password()
-        
-    elif rta == 4:
         if type(persona)==Cliente:
-            menu_cliente()
+            menu_cliente(persona)
 
         elif type(persona)==Empleado:
-            menu_empleado()
+            menu_empleado(persona)
 
         else:
-            menu_gerente()
+            menu_gerente(persona)
 
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -1321,27 +1537,30 @@ def menu_gerente(gerente):
     print("3. Datos Personales")
     print("4. Administración de personal")
     print("5. Estadísticas")
-    print("6. Volver atras")
-    print("7. Salir")
-    rta = validar_respuesta_menu(7)
+    print("6. Actualizar tipo de empleados")
+    print("7. Volver atras")
+    print("8. Salir")
+    rta = validar_respuesta_menu(8)
     if rta == 1:
         print("Ingreso efectuado")
-    if rta == 2:
+    elif rta == 2:
         print("Egreso efectuado")
-    if rta == 3:
+    elif rta == 3:
         menu_datos_personales(gerente)
     if rta == 4:
-        menu_administracion_personal()
+        menu_administracion_personal(gerente)
     if rta == 5:
         menu_estadisticas()
-    if rta == 6:
+    elif rta == 6:
+        gerente.actualizar_tipo_empleados()
+    elif rta == 7:
         menuPOO()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
 
 # Menu administracion de personal
-def menu_administracion_personal():
+def menu_administracion_personal(gerente):
     print("Bienvenido al menu de administración de personal")
     print("¿Qué desea hacer?")
     print("1. Ver empleados")
@@ -1381,19 +1600,15 @@ def menu_administracion_personal():
         dni_requerido=validar_dni()
         for empleado in lista_empleados:
             if empleado.DNI==dni_requerido:
-                empleado.modificar_datos_personales()
-                for i in range(len(matriz_empleados)):
-                    if dni_requerido==matriz_empleados[i][2]:
-                        matriz_empleados[i]=[empleado.nombre,empleado.apellido,empleado.DNI,empleado.mail,empleado.password,empleado.fec_nac,empleado.area,empleado.activo]
-                        matriztocsv("empleados.csv",matriz_empleados,"E")
+                gerente.modificarEmpleado(empleado)
 
     if rta == 4:
         # Eliminar empleado
         dni_requerido=validar_dni()
         for i in range(len(matriz_empleados)):
-                    if dni_requerido==matriz_empleados[i][2]:
-                        matriz_empleados.pop(i)
-                        matriztocsv("empleados.csv",matriz_empleados,"E")
+            if dni_requerido==matriz_empleados[i][2]:
+                matriz_empleados.pop(i)
+                matriztocsv("empleados.csv",matriz_empleados,"E")
 
     if rta == 5:
         menu_gerente()
