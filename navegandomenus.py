@@ -975,15 +975,16 @@ class Gerente(Empleado):
 
     def modificarEmpleado(self,empleado):
         print("¿Qué dato desea modificar?")
-        print("1. Nombre")
-        print("2. Apellido")
-        print("3. Mail")
-        print("4. Contraseña")
-        print("5. Fecha de nacimiento")
-        print("6. Area")
-        print("7. Estado")
+        print(f"1. Nombre: {empleado.nombre}")
+        print(f"2. Apellido: {empleado.apellido}")
+        print(f"3. Mail: {empleado.mail}")
+        print(f"4. Contraseña: {empleado.password}")
+        print(f"5. Fecha de nacimiento: {empleado.fec_nac}")
+        print(f"6. Area: {empleado.area}")
+        print(f"7. Estado: {empleado.activo}")
         print("8. Volver atras")
         print("9. Salir")
+
         rta=validar_respuesta_menu(9)
         matriz_empleados = csvtomatriz("empleados.csv")
 
@@ -1031,7 +1032,7 @@ class Gerente(Empleado):
             empleado.modificar_datos_personales()
             
         elif rta == 8: 
-            menu_gerente(self)
+            menu_administracion_personal(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
@@ -1369,7 +1370,7 @@ def strtodatime(fecha):
     return fecha
 
 def stringAempleado(matriz):
-    lista_empleados=[]
+    lista_empleados=Lista_Enlazada()
     for i in range(len(matriz)):
         lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
     return lista_empleados
@@ -1461,6 +1462,7 @@ def menuPOO():
                     if mail == matriz_clientes[i][3]:
                         if contrasena == matriz_clientes[i][4]:
                             print("Ingreso exitoso")
+                            print("")
                             cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
                             menu_cliente(cliente)
                             exit()
@@ -1485,6 +1487,7 @@ def menuPOO():
                 if mail == matriz_empleados[i][3]:
                     if contrasena == matriz_empleados[i][4]:
                         print("Ingreso exitoso")
+                        print("")
                         empleado = Empleado(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_empleado(empleado)
                         exit()
@@ -1507,6 +1510,7 @@ def menuPOO():
                 if mail == matriz_empleados[i][3]:
                     if contrasena == matriz_empleados[i][4] and matriz_empleados[i][6] == "gerente":
                         print("Ingreso exitoso")
+                        print("")
                         gerente = Gerente(matriz_empleados[i][0], matriz_empleados[i][1], matriz_empleados[i][2], matriz_empleados[i][3], matriz_empleados[i][4], matriz_empleados[i][5],matriz_empleados[i][6],matriz_empleados[i][7])
                         menu_gerente(gerente)
                         exit()
@@ -1787,10 +1791,17 @@ def menu_administracion_personal(gerente):
  
     if rta == 3:
         # Modificar empleado
+        for i in range(len(lista_empleados)):
+            print(lista_empleados[i])
+            print("")
         dni_requerido=validar_dni()
-        for empleado in lista_empleados:
-            if empleado.DNI==dni_requerido:
-                gerente.modificarEmpleado(empleado)
+        for i in range(len(lista_empleados)):
+            if lista_empleados[i].DNI==dni_requerido:
+                print("")
+                gerente.modificarEmpleado(lista_empleados[i])
+            elif i == len(lista_empleados)-1:
+                print("No se encontró el empleado.")
+                print("")
         menu_administracion_personal(gerente)
 
     if rta == 4:
