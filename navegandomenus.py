@@ -142,7 +142,7 @@ class Cliente(Persona):
         if rta == 1:
             habitacion = self.chequear_disponibilidad("simple", reserva)
             if habitacion != reserva.habitacion:
-                print("¿Desea confirmar la reserva?")
+                print(f"¿Desea confirmar la reserva? Precio: ${str(int(habitaciones_desc[0][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))}")
                 print("1. Si")
                 print("2. No")
                 rta = validar_respuesta_menu(2)
@@ -150,12 +150,14 @@ class Cliente(Persona):
                 if rta == 1:
                     reserva.habitacion = habitacion
                     reserva.tipo = "simple"
+                    reserva.precio = str(int(habitaciones_desc[0][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))
 
                     matriz=csvtomatriz("reservas.csv")
                     for i in range(len(matriz)):
                         if reserva.numero_res == matriz[i][0]:
                             matriz[i][2] = habitacion
                             matriz[i][3] = "simple"
+                            matriz[i][11] = reserva.precio
                     matriztocsv("reservas.csv", matriz,"R")
 
                     for i in range(len(habitaciones_desc)):
@@ -175,7 +177,7 @@ class Cliente(Persona):
         if rta == 2:
             habitacion = self.chequear_disponibilidad("doble", reserva)
             if habitacion != reserva.habitacion:
-                print("¿Desea confirmar la reserva?")
+                print(f"¿Desea confirmar la reserva? Precio: ${str(int(habitaciones_desc[1][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))}")
                 print("1. Si")
                 print("2. No")
                 rta = validar_respuesta_menu(2)
@@ -183,12 +185,14 @@ class Cliente(Persona):
                 if rta == 1:
                     reserva.habitacion = habitacion
                     reserva.tipo = "doble"
+                    reserva.precio = str(int(habitaciones_desc[1][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))
 
                     matriz=csvtomatriz("reservas.csv")
                     for i in range(len(matriz)):
                         if reserva.numero_res == matriz[i][0]:
                             matriz[i][2] = habitacion
                             matriz[i][3] = "doble"
+                            matriz[i][11] = reserva.precio
                     matriztocsv("reservas.csv", matriz,"R")
 
                     for i in range(len(habitaciones_desc)):
@@ -208,7 +212,7 @@ class Cliente(Persona):
         if rta == 3:
             habitacion = self.chequear_disponibilidad("suite", reserva)
             if habitacion != reserva.habitacion:
-                print("¿Desea confirmar la reserva?")
+                print(f"¿Desea confirmar la reserva? Precio: ${str(int(habitaciones_desc[2][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))}")
                 print("1. Si")
                 print("2. No")
                 rta = validar_respuesta_menu(2)
@@ -216,12 +220,14 @@ class Cliente(Persona):
                 if rta == 1:
                     reserva.habitacion = habitacion
                     reserva.tipo = "suite"
+                    reserva.precio = str(int(habitaciones_desc[2][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))
 
                     matriz=csvtomatriz("reservas.csv")
                     for i in range(len(matriz)):
                         if reserva.numero_res == matriz[i][0]:
                             matriz[i][2] = habitacion
                             matriz[i][3] = "suite"
+                            matriz[i][11] = reserva.precio
                     matriztocsv("reservas.csv", matriz,"R")
 
                     for i in range(len(habitaciones_desc)):
@@ -241,7 +247,7 @@ class Cliente(Persona):
         if rta == 4:
             habitacion = self.chequear_disponibilidad("familiar", reserva)
             if habitacion != reserva.habitacion:
-                print("¿Desea confirmar la reserva?")
+                print(f"¿Desea confirmar la reserva? Precio: ${str(int(habitaciones_desc[3][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))}")
                 print("1. Si")
                 print("2. No")
                 rta = validar_respuesta_menu(2)
@@ -249,12 +255,14 @@ class Cliente(Persona):
                 if rta == 1:
                     reserva.habitacion = habitacion
                     reserva.tipo = "familiar"
+                    reserva.precio = str(int(habitaciones_desc[3][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))
 
                     matriz=csvtomatriz("reservas.csv")
                     for i in range(len(matriz)):
                         if reserva.numero_res == matriz[i][0]:
                             matriz[i][2] = habitacion
                             matriz[i][3] = "familiar"
+                            matriz[i][11] = reserva.precio
                     matriztocsv("reservas.csv", matriz,"R")
 
                     for i in range(len(habitaciones_desc)):
@@ -401,23 +409,38 @@ class Cliente(Persona):
                             if strtodatime(reservas[j][5]) >= strtodatime(ing_nuevo):
                                 habitaciones_filtradas[i][2] = "no disponible"
             
+            for i in range(len(habitaciones_desc)):
+                            if habitaciones_desc[i][0] == reserva.tipo:
+                                precio = int(habitaciones_desc[i][1])
+                                break
+            
             # Recorro las habitaciones a ver si hay una disponible y asigno la primera que encuentre
             for i in range(len(habitaciones_filtradas)):
                 if habitaciones_filtradas[i][2] == "disponible":
                     print("Habitación asignada:", habitaciones_filtradas[i][0])
-                    print("¿Desea confirmar la reserva?")
+                    print(f"¿Desea confirmar la reserva? Precio: ${precio* (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days})")
                     print("1. Si")
                     print("2. No")
                     rta = validar_respuesta_menu(2)
                     if rta == 1:
                         reserva.habitacion = habitaciones_filtradas[i][0]
                         reserva.fecha_ing = ing_nuevo
+                        reserva.precio = str(int(habitaciones_desc[i][1])* int((strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days))
                         matriz=csvtomatriz("reservas.csv")
                         for j in range(len(matriz)):
                             if reserva.numero_res == matriz[j][0]:
                                 matriz[j][2] = habitaciones_filtradas[i][0]
                                 matriz[j][4] = ing_nuevo
+                                matriz[j][11] = reserva.precio
                         matriztocsv("reservas.csv", matriz,"R")
+
+                        matriz=csvtomatriz("clientes.csv")
+                        for i in range(len(matriz)):
+                            if self.DNI == matriz[i][2]:
+                                self.gastos = str(int(self.gastos) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                                matriz[i][6] = str(int(matriz[i][6]) + precio * (strtodatime(reserva.fecha_egr) - strtodatime(reserva.fecha_ing)).days - costo_actual)
+                        matriztocsv("clientes.csv", matriz,"Cl")
+
                         print("Reserva confirmada.")
                         break
                     
@@ -461,29 +484,30 @@ class Cliente(Persona):
                             if strtodatime(reservas[j][5]) >= strtodatime(reserva.fecha_ing):
                                 habitaciones_filtradas[i][2] = "no disponible"
             
+            for i in range(len(habitaciones_desc)):
+                        if habitaciones_desc[i][0] == reserva.tipo:
+                            precio = int(habitaciones_desc[i][1])
+                            break
+            
             # Recorro las habitaciones a ver si hay una disponible y asigno la primera que encuentre
             for i in range(len(habitaciones_filtradas)):
                 if habitaciones_filtradas[i][2] == "disponible":
                     print("Habitación asignada:", habitaciones_filtradas[i][0])
-                    print("¿Desea confirmar la reserva?")
+                    print(f"¿Desea confirmar la reserva? Precio: ${precio* (strtodatime(egr_nuevo) - strtodatime(reserva.fecha_ing)).days})")
                     print("1. Si")
                     print("2. No")
                     rta = validar_respuesta_menu(2)
                     if rta == 1:
                         reserva.habitacion = habitaciones_filtradas[i][0]
                         reserva.fecha_egr = egr_nuevo
+                        reserva.precio = str(int(habitaciones_desc[i][1])* int((strtodatime(egr_nuevo) - strtodatime(reserva.fecha_ing)).days))
                         matriz=csvtomatriz("reservas.csv")
                         for j in range(len(matriz)):
                             if reserva.numero_res == matriz[j][0]:
                                 matriz[j][2] = habitaciones_filtradas[i][0]
                                 matriz[j][5] = egr_nuevo
+                                matriz[j][11] = reserva.precio
                         matriztocsv("reservas.csv", matriz,"R")
-
-                    habitaciones_desc = csvtomatriz("habitaciones_descripciones.csv")
-                    for i in range(len(habitaciones_desc)):
-                        if habitaciones_desc[i][0] == reserva.tipo:
-                            precio = int(habitaciones_desc[i][1])
-                            break
 
                     matriz=csvtomatriz("clientes.csv")
                     for i in range(len(matriz)):
@@ -764,6 +788,7 @@ class Cliente(Persona):
             consumo.precio = str(precio * int(cantidad))
 
             print ("¿Desea confirmar el consumo?")
+            print (f"Precio: ${consumo.precio}")
             print("1. Si")
             print("2. No")
 
@@ -858,7 +883,7 @@ class Empleado(Persona):
             print("")
             self.modificar_datos_personales()
         elif rta == 6: 
-            menu_empleado()
+            menu_datos_personales(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
@@ -1270,7 +1295,6 @@ def validar_hora_egreso(hora_ingreso):
         hora_egreso=dt.datetime.now().strftime("%H:%M")
     return hora_egreso
         
-
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
     # Paso los datos de rtas a string
@@ -1389,6 +1413,7 @@ def menuPOO():
 
             print("¿Desea confirmar su registro?")
             print(cliente)
+            print("")
             print("1. Confirmar")
             print("2. Cancelar")
             rta = validar_respuesta_menu(2)
@@ -1737,6 +1762,7 @@ def menu_administracion_personal(gerente):
         for i in range(len(lista_empleados)):
             print(lista_empleados[i])
             print('\n')
+        menu_administracion_personal(gerente)
         
     if rta == 2:
         # Agregar empleado

@@ -1,4 +1,4 @@
-Numero de reserva;DNI del cliente;Habitacion;Fecha de ingreso;Fecha de egreso;Cantidad de personas;Checkin;Checkout;Horario de checkin;Horario de checkout;precio_final
+Numero de reserva;DNI del cliente;Habitacion;Fecha de ingreso;Fecha de egreso;Cantidad de personas;Checkin;Checkout;Horario de checkin;Horario de checkout
 1;43864072;Sim1;simple;20/01/2022;02/03/2022;1;si;si;10:00;10:00;5000
 2;43864072;Sim2;simple;14/07/2022;21/07/2022;1;si;si;10:00;10:00;700
 3;43864072;Sim3;simple;12/07/2023;19/07/2023;1;si;no;10:00;no;700
@@ -7,4 +7,4 @@ Numero de reserva;DNI del cliente;Habitacion;Fecha de ingreso;Fecha de egreso;Ca
 6;43517955;Suit1;suite;6/02/2023;17/02/2023;2;si;si;10:00;10:00;3300
 7;43517955;fam1;familiar;10/12/2023;15/01/2024;3;no;no;no;no;14400
 8;43517955;Sim1;simple;13/11/2023;15/11/2023;1;si;no;19:35;no;200
-9;43517955;fam2;familiar;16/12/2023;15/01/2024;1;no;no;no;no;12000
+9;43517955;suit1;suite;16/12/2023;15/01/2024;1;no;no;no;no;9000
