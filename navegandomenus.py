@@ -836,6 +836,7 @@ class Empleado(Persona):
                 if self.DNI==matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][1]:
                     hora_egreso=validar_hora_egreso(matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][3])
                     matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][4]=hora_egreso
+                    break
             matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
 
 
