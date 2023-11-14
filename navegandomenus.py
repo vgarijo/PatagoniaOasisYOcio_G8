@@ -958,6 +958,20 @@ class Gerente(Empleado):
     def actualizar_status(self):
         print("")
 
+    def agregar_empleado(self, matriz_empleados):
+        print('Ingrese los datos del nuevo empleado:')
+        print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
+        nombre=input("Nombre del empleado: ")
+        apellido=input("Apellido del empleado: ")
+        dni=validar_dni()
+        mail=validar_mail()
+        password=input("Constraseña del empleado: ")
+        print("Ingrese fecha de nacimiento: ")
+        fecha_nac=validar_fec("")
+        area=input("Área del empleado: ")
+        activo=input("Área del empleado (Activo o No activo): ")
+        matriz_empleados.append([nombre,apellido,dni,mail,password,fecha_nac,area,activo])
+        matriztocsv("empleados.csv",matriz_empleados,"E")
 
     def modificarEmpleado(self,empleado):
         print("¿Qué dato desea modificar?")
@@ -1735,9 +1749,9 @@ def menu_gerente(gerente):
     if rta == 4:
         menu_administracion_personal(gerente)
     if rta == 5:
-        menu_estadisticas()
+        menu_estadisticas(gerente)
     elif rta == 6:
-        gerente.actualizar_tipo_empleados()
+        gerente.actualizar_tipo_clientes()
     elif rta == 7:
         menuPOO()
     else:
@@ -1767,26 +1781,17 @@ def menu_administracion_personal(gerente):
         
     if rta == 2:
         # Agregar empleado
-        print('Ingrese los datos del nuevo empleado:')
-        print("\n")  #nombre, apellido, DNI, mail, password, fec_nac, area, activo
-        nombre=input("Nombre del empleado: ")
-        apellido=input("Apellido del empleado: ")
-        dni=validar_dni()
-        mail=validar_mail()
-        password=input("Constraseña del empleado: ")
-        print("Ingrese fecha de nacimiento: ")
-        fecha_nac=validar_fec("")
-        area=input("Área del empleado: ")
-        activo=input("Área del empleado (Activo o No activo): ")
-        matriz_empleados.append([nombre,apellido,dni,mail,password,fecha_nac,area,activo])
-        matriztocsv("empleados.csv",matriz_empleados,"E")
-        
+        matriz_empleados=csvtomatriz("empleados.csv")
+        gerente.agregar(matriz_empleados)
+        menu_administracion_personal(gerente)
+ 
     if rta == 3:
         # Modificar empleado
         dni_requerido=validar_dni()
         for empleado in lista_empleados:
             if empleado.DNI==dni_requerido:
                 gerente.modificarEmpleado(empleado)
+        menu_administracion_personal(gerente)
 
     if rta == 4:
         # Eliminar empleado
@@ -1795,9 +1800,10 @@ def menu_administracion_personal(gerente):
             if dni_requerido==matriz_empleados[i][2]:
                 matriz_empleados.pop(i)
                 matriztocsv("empleados.csv",matriz_empleados,"E")
+        menu_administracion_personal(gerente)
 
     if rta == 5:
-        menu_gerente()
+        menu_gerente(gerente)
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
