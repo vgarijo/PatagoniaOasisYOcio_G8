@@ -1326,26 +1326,80 @@ def menuPOO():
     print("4. Salir")
     rta = validar_respuesta_menu(4)
     if rta == 1:
-        matriz_clientes=csvtomatriz("clientes.csv")
-        # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
-        
-        while True:
-            mail = input("Ingrese su mail. Presione 0 para volver: ")
-            if mail == "0":
-                menuPOO()
-                break
-            else:
-                contrasena = input("Ingrese su contraseña: ")
-                print("")
-            
+
+        print("¿Desea registrarse o ingresar?")
+        print("1. Registrarse")
+        print("2. Ingresar")
+        print("3. Volver")
+        rta = validar_respuesta_menu(3)
+
+        if rta == 1:
+            matriz_clientes = csvtomatriz("clientes.csv")
+            cliente = Cliente("","","","","","","","")
+            print("Ingrese sus datos:")
+            cliente.nombre = input("Nombre: ")
+            cliente.apellido = input("Apellido: ")
+            DNI = validar_dni()
+            for i in range(len(matriz_clientes)):
+                if DNI == matriz_clientes[i][2]:
+                    print("Ya existe un usuario con ese DNI.")
+                    print("")
+                    menuPOO()
+                    exit()
+            cliente.DNI = DNI
+            mail = validar_mail()
             for i in range(len(matriz_clientes)):
                 if mail == matriz_clientes[i][3]:
-                    if contrasena == matriz_clientes[i][4]:
-                        print("Ingreso exitoso")
-                        cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
-                        menu_cliente(cliente)
-                        exit()
-            print("Mail o contraseña incorrectos. Intente nuevamente.")
+                    print("Ya existe un usuario con ese mail.")
+                    print("")
+                    menuPOO()
+                    exit()
+            cliente.mail = mail
+            cliente.password = input("Contraseña: ")
+            cliente.fec_nac = validar_fec("Ingrese su fecha de nacimiento (DD/MM/AAAA): ")
+            cliente.gastos = "0"
+            cliente.tipo = "básico"
+
+            print("¿Desea confirmar su registro?")
+            print(cliente)
+            print("1. Confirmar")
+            print("2. Cancelar")
+            rta = validar_respuesta_menu(2)
+
+            if rta == 1:
+                matriz_clientes.append([cliente.nombre, cliente.apellido, cliente.DNI, cliente.mail, cliente.password, cliente.fec_nac, cliente.gastos, cliente.tipo])
+                matriztocsv("clientes.csv", matriz_clientes,"Cl")
+                print("Registro exitoso. Ingrese sus datos para ingresar al sistema.")
+                print("")
+            else:
+                print("Cancelando...")
+                print("")
+            
+            menuPOO()
+            exit()
+        elif rta == 2:
+            matriz_clientes=csvtomatriz("clientes.csv")
+            # Ejecuta ingreso_usuario, chequea el mail si está registrado o vuelve a pedir el mail
+            
+            while True:
+                mail = input("Ingrese su mail. Presione 0 para volver: ")
+                if mail == "0":
+                    menuPOO()
+                    break
+                else:
+                    contrasena = input("Ingrese su contraseña: ")
+                    print("")
+                
+                for i in range(len(matriz_clientes)):
+                    if mail == matriz_clientes[i][3]:
+                        if contrasena == matriz_clientes[i][4]:
+                            print("Ingreso exitoso")
+                            cliente = Cliente(matriz_clientes[i][0], matriz_clientes[i][1], matriz_clientes[i][2], matriz_clientes[i][3], matriz_clientes[i][4], matriz_clientes[i][5],matriz_clientes[i][6],matriz_clientes[i][7])
+                            menu_cliente(cliente)
+                            exit()
+                print("Mail o contraseña incorrectos. Intente nuevamente.")
+        else:
+            menuPOO()
 
     elif rta == 2:
         matriz_empleados=csvtomatriz("empleados.csv")
