@@ -1782,7 +1782,7 @@ def menu_administracion_personal(gerente):
     if rta == 2:
         # Agregar empleado
         matriz_empleados=csvtomatriz("empleados.csv")
-        gerente.agregar(matriz_empleados)
+        gerente.agregar_empleado(matriz_empleados)
         menu_administracion_personal(gerente)
  
     if rta == 3:
