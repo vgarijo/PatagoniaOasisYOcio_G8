@@ -1,4 +1,4 @@
-Numero de reserva;DNI del cliente;Habitacion;Fecha de ingreso;Fecha de egreso;Cantidad de personas;Checkin;Checkout;Horario de checkin;Horario de checkout
+Numero de reserva;DNI del cliente;Habitacion;Tipo;Fecha de ingreso;Fecha de egreso;Cantidad de personas;Checkin;Checkout;Horario de checkin;Horario de checkout;Precio
 1;43864072;Sim1;simple;20/01/2022;02/03/2022;1;si;si;10:00;10:00;5000
 2;43864072;Sim2;simple;14/07/2022;21/07/2022;1;si;si;10:00;10:00;700
 3;43864072;Sim3;simple;12/07/2023;19/07/2023;1;si;no;10:00;no;700

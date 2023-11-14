@@ -2,4 +2,4 @@ tipo;precio;max_personas;camas_ind;camas_mat;baño;balcon;cantidad
 simple;100;1;1;0;compartido;no;4
 doble;200;2;0;1;compartido;no;4
 suite;300;2;0;1;privado;si;2
-familiar;400;4;2;1;privado;si;2
+familiar;400;4;2;1;privado;si;3

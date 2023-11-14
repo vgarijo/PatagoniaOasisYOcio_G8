@@ -1,4 +1,4 @@
 Nombre;Apellido;DNI;Mail;Password;Fecha de Nacimiento;Gastos;Tipo
-Franco;Rossi;43864072;frossi@gmail.com;FRossi123;24/07/2002;1000;premium
-Valentin Julian;Montero;43517955;vmontero@gmail.com;VMon123;10/08/2003;16245;gold
-Mirta;Gimenez;45178562;mirtag543@gmail.com;mGim543;11/08/1998;0;basico
+Franco;Rossi;43864072;frossi@gmail.com;FRossi123;24/07/2002;1000;Basico
+Valentin Julian;Montero;43517955;vmontero@gmail.com;VMon123;10/08/2003;16245;Premium
+Mirta;Gimenez;45178562;mirtag543@gmail.com;mGim543;11/08/1998;0;Basico

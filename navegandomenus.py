@@ -955,8 +955,30 @@ class Gerente(Empleado):
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
     
-    def actualizar_status(self):
+    def actualizar_tipo_clientes(self):
+        # El tipo de cliente varía según sus gastos totales
+        # De 0 a 5000: Basico
+        # De 5000 a 10000: Regular
+        # De 10000 a 20000: Premium
+        # Más de 20000: Gold
+
+        matriz_clientes = csvtomatriz("clientes.csv")
+
+        for i in range(len(matriz_clientes)):
+            if int(matriz_clientes[i][6]) < 5000:
+                matriz_clientes[i][7] = "Basico"
+            elif int(matriz_clientes[i][6]) < 10000:
+                matriz_clientes[i][7] = "Regular"
+            elif int(matriz_clientes[i][6]) < 20000:
+                matriz_clientes[i][7] = "Premium"
+            else:
+                matriz_clientes[i][7] = "Gold"
+        
+        matriztocsv("clientes.csv", matriz_clientes,"Cl")
+
+        print ("Tipos de clientes actualizados.")
         print("")
+        menu_gerente(self)
 
     def agregar_empleado(self, matriz_empleados):
         print('Ingrese los datos del nuevo empleado:')
@@ -1036,14 +1058,84 @@ class Gerente(Empleado):
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
-
-    def consultarocupacion(self):
-        fecha = (input("Ingrese la fecha que desee: "))
-        validar_fec(fecha)
-        listareservas = csvtomatriz("reservas.csv")
-        porcentaje = calcular_porc_hab_ocupadas(fecha,listareservas)
-        return porcentaje
     
+    def porcentaje_ocupacion(self,tipo):
+
+        reservas = csvtomatriz("reservas.csv")
+        habitaciones = csvtomatriz("habitaciones.csv")
+
+        if tipo == None:
+            total_habitaciones = len(habitaciones)
+            habitaciones_ocupadas = 0
+            for i in range(len(reservas)):
+                if strtodatime(reservas[i][4]) <= dt.datetime.today() and strtodatime(reservas[i][5]) >= dt.datetime.today():
+                    habitaciones_ocupadas += 1
+            
+            if total_habitaciones == 0:
+                porcentaje = 0
+            else:
+                # Dos decimales
+                porcentaje = str(round(habitaciones_ocupadas * 100 / total_habitaciones, 2))
+                  
+            print(f"El porcentaje de ocupación el día de hoy es del: {porcentaje}%. Están ocupadas {habitaciones_ocupadas} habitaciones de un total de {total_habitaciones}.")
+            print("")
+        else:
+            total_habitaciones = 0
+            habitaciones_ocupadas = 0
+            for i in range(len(habitaciones)):
+                if habitaciones[i][1] == tipo:
+                    total_habitaciones += 1
+            for i in range(len(reservas)):
+                if strtodatime(reservas[i][4]) <= dt.datetime.today() and strtodatime(reservas[i][5]) >= dt.datetime.today() and reservas[i][3] == tipo:
+                    habitaciones_ocupadas += 1
+            
+            if total_habitaciones == 0:
+                porcentaje = 0
+            else:
+                porcentaje = str(round(habitaciones_ocupadas * 100 / total_habitaciones, 2))
+            
+            print(f"El porcentaje de ocupación de las habitaciones de tipo {tipo} el día de hoy es del: {porcentaje}%. Están ocupadas {habitaciones_ocupadas} habitaciones de un total de {total_habitaciones}.")
+            print("")
+
+    def cantidad_clientes(self,tipo):
+        clientes = csvtomatriz("clientes.csv")
+        total_clientes = len(clientes)
+        total_tipo = 0
+        for i in range(len(clientes)):
+            if clientes[i][7] == tipo:
+                total_tipo += 1
+        
+        if total_clientes == 0:
+            porcentaje = 0
+        else:
+            porcentaje = str(round(total_tipo * 100 / total_clientes, 2))
+
+        print(f"El porcentaje de clientes de tipo {tipo} es del: {porcentaje}%. Hay {total_tipo} clientes de un total de {total_clientes}.")
+        print("")
+
+    def recaudacion_diaria(self,fecha):
+        # Se asume que la recaudación de las reservas se hace ese mismo día
+
+        reservas = csvtomatriz("reservas.csv")
+        consumos = csvtomatriz("consumos.csv")
+
+        recaudacion = 0
+
+        for i in range(len(reservas)):
+            if strtodatime(reservas[i][4]) == fecha:
+                recaudacion += int(reservas[i][11])
+        
+        for i in range(len(consumos)):
+            if strtodatime(consumos[i][2]) == fecha:
+                recaudacion += int(consumos[i][5])
+
+        if fecha == dt.datetime.today().strftime("%d/%m/%Y"):
+            print(f"La recaudación de hoy es de ${recaudacion}.")
+        else:
+            print(f"La recaudación del {fecha} es de ${recaudacion}.")
+
+
+
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout,precio):
         self.dni_cliente = dni_cliente
@@ -1336,7 +1428,7 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
     if tipo=="R":
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow(["Numero de reserva", "DNI del cliente", "Habitacion", "Fecha de ingreso", "Fecha de egreso", "Cantidad de personas", "Checkin", "Checkout", "Horario de checkin", "Horario de checkout"])
+            writer.writerow(["Numero de reserva", "DNI del cliente", "Habitacion", "Tipo", "Fecha de ingreso", "Fecha de egreso", "Cantidad de personas", "Checkin", "Checkout", "Horario de checkin", "Horario de checkout", "Precio"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
     elif tipo=="E":
@@ -1374,14 +1466,6 @@ def stringAempleado(matriz):
     for i in range(len(matriz)):
         lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
     return lista_empleados
-
-def calcular_porc_hab_ocupadas(fecha,lista):
-    cantreservas = 0
-    for i in range(len(lista)):
-        if (lista[i][4]>fecha and lista[i][5]<fecha):
-            cantreservas += 1
-    porcentaje = cantreservas/12 * 100
-    return porcentaje
 
 # Menu principal
 def menuPOO():
@@ -1820,7 +1904,7 @@ def menu_administracion_personal(gerente):
         exit()
 
 # Menu estadisticas
-def menu_estadisticas():
+def menu_estadisticas(gerente):
     print("Bienvenido al menu de estadísticas")
     print("¿Qué desea hacer?")
     print("1. Ver porcentajes de ocupación")
@@ -1831,39 +1915,83 @@ def menu_estadisticas():
     print("6. Salir")
     rta = validar_respuesta_menu(6)
     if rta == 1:
-        # método para ver porcentajes de ocupación
-        pass
-    if rta == 2:
-        # método para ver porcentajes de ocupación por tipo de habitación
-        pass
-    if rta == 3:
-        # método para ver cantidad de clientes por tipo
-        pass
-    if rta == 4:
-        recaudacion_diaria()
-    if rta == 5:
-        menu_gerente()
+        gerente.porcentaje_ocupacion(None)
+        menu_estadisticas(gerente)
+    elif rta == 2:
+        print("¿Qué tipo de habitación desea ver?")
+        print("1. Simple")
+        print("2. Doble")
+        print("3. Triple")
+        print("4. Suite")
+        print("5. Volver atras")
+        print("6. Salir")
+        rta = validar_respuesta_menu(4)
+        
+        if rta == 1:
+            gerente.porcentaje_ocupacion("simple")
+        if rta == 2:
+            gerente.porcentaje_ocupacion("doble")
+        if rta == 3:
+            gerente.porcentaje_ocupacion("triple")
+        if rta == 4:
+            gerente.porcentaje_ocupacion("suite")
+
+        if rta < 6:
+            menu_estadisticas(gerente)
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+    elif rta == 3:
+        print ("¿Qué tipo de cliente desea ver?")
+        print("1. Basico")
+        print("2. Regular")
+        print("3. Premium")
+        print("4. Gold")
+        print("5. Volver atras")
+        print("6. Salir")
+        rta = validar_respuesta_menu(6)
+
+        if rta == 1:
+            gerente.cantidad_clientes("Basico")
+        if rta == 2:
+            gerente.cantidad_clientes("Regular")
+        if rta == 3:
+            gerente.cantidad_clientes("Premium")
+        if rta == 4:
+            gerente.cantidad_clientes("Gold")
+        
+        if rta < 6:
+            menu_estadisticas(gerente)
+            exit()
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+    elif rta == 4:
+        gerente.recaudacion_diaria()
+    elif rta == 5:
+        menu_gerente(gerente)
+        exit()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
 
-def recaudacion_diaria():
-    print("Ver recaudación diaria de:")
-    print("1. Hoy")
-    print("2. Seleccionar una fecha")
-    print("3. Volver atras")
-    print("4. Salir")
-    rta = validar_respuesta_menu(4)
-    if rta == 1:
-        # método para ver recaudación diaria de hoy
-        pass
-    if rta == 2:
-        # método para ver recaudación diaria de una fecha
-        pass
-    if rta == 3:
-        menu_estadisticas()
-    else:
-        print("Gracias por utilizar nuestros servicios. Hasta pronto.")
-        exit()
+def menu_recaudacion_diaria(gerente):
+        print("Ver recaudación diaria de:")
+        print("1. Hoy")
+        print("2. Seleccionar una fecha")
+        print("3. Volver atras")
+        print("4. Salir")
+        rta = validar_respuesta_menu(4)
+        if rta == 1:
+            gerente.recaudacion_diaria(dt.datetime.today())
+        elif rta == 2:
+            fecha = validar_fec("Ingrese la fecha (DD/MM/AAAA): ")
+            gerente.recaudacion_diaria(strtodatime(fecha))
+        if rta < 3:
+            menu_estadisticas(gerente)
+        else:
+            print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+            exit()
+
 
 menuPOO()
