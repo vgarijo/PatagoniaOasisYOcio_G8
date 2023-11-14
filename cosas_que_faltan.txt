@@ -9,3 +9,11 @@ linea 912 en adelante, faltan los menus estadísticos.
 id ingreso, dni emp, dia, hor-ent,hor-salida
 
 si no entro, no salio----> funcion ingreso genera una nueva fila, egreso modifica la fila
+
+
+
+
+admin personal checkear
+estadisticas
+actualizar tipo de clientes
+ingreso-egreso

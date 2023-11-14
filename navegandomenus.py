@@ -802,6 +802,19 @@ class Empleado(Persona):
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
 
+    def ingreso_egreso(self,tipo): # "I" ingreso y "E" egreso
+        matriz_ingresos_egresos=csvtomatriz("ingresos_egresos.csv")
+        if tipo=="I":
+            matriz_ingresos_egresos.append([len(matriz_ingresos_egresos)+1,self.DNI,dt.datetime.today().strftime("%d/%m/%Y"),dt.datetime.now().strftime("%H:%M"),None])
+        else: 
+            for i in range(len(matriz_ingresos_egresos)):
+                if self.DNI==matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][1]:
+                    hora_egreso=validar_hora_egreso(matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][3])
+                    matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][4]=hora_egreso
+            matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
+
+
+
     def modificar_datos_personales(self):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
@@ -1250,6 +1263,14 @@ def validar_fec(mensaje):
         fecha = input("Fecha no válida, ingrese otra: ")
     return fecha
 
+def validar_hora_egreso(hora_ingreso):
+    if hora_ingreso==None:
+        hora_egreso=None
+    else:
+        hora_egreso=dt.datetime.now().strftime("%H:%M")
+    return hora_egreso
+        
+
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
     # Paso los datos de rtas a string
@@ -1271,7 +1292,7 @@ def csvtomatriz(archivo):
     except IOError:
         print("No se encontró el archivo.")
 
-def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una reserva "R" o un nuevo empleado "E"
+def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una reserva "R" o un nuevo empleado "E", "Con" consumos, "Cl" cliente y "IE" ingresos y egresos
     if tipo=="R":
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
@@ -1294,6 +1315,12 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerow(["Nombre", "Apellido", "DNI", "Mail", "Password", "Fecha de Nacimiento", "Gastos", "Tipo"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
+    elif tipo=="IE":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["Id_Ingreso", "DNI del empleado", "Dia", "Hora_Entrada", "Hora_Salida"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
 
@@ -1591,7 +1618,7 @@ def menu_consumos(cliente):
         cliente.consumir()
         pass
     elif rta == 3:
-        menu_cliente()
+        menu_cliente(cliente)
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
         exit()
@@ -1641,9 +1668,13 @@ def menu_empleado(empleado):
     print("5. Salir")
     rta = validar_respuesta_menu(5)
     if rta == 1:
+        empleado.ingreso_egreso("I")
         print("Ingreso efectuado")
+        menu_empleado(empleado)
     if rta == 2:
+        empleado.ingreso_egreso("E")
         print("Egreso efectuado")
+        menu_empleado(empleado)
     if rta == 3:
         menu_datos_personales(empleado)
     if rta == 4:
@@ -1666,9 +1697,13 @@ def menu_gerente(gerente):
     print("8. Salir")
     rta = validar_respuesta_menu(8)
     if rta == 1:
+        gerente.ingreso_egreso("I")
         print("Ingreso efectuado")
+        menu_gerente(gerente)
     elif rta == 2:
+        gerente.ingreso_egreso("E")
         print("Egreso efectuado")
+        menu_gerente(gerente)
     elif rta == 3:
         menu_datos_personales(gerente)
     if rta == 4:
