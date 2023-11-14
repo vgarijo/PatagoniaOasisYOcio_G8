@@ -708,7 +708,14 @@ class Gerente(Empleado):
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
-        
+
+    def consultarocupacion(self):
+        fecha = (input("Ingrese la fecha que desee: "))
+        validar_fec(fecha)
+        listareservas = csvtomatriz("reservas.csv")
+        porcentaje = calcular_porc_hab_ocupadas(fecha,listareservas)
+        return porcentaje
+    
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout):
         self.dni_cliente = dni_cliente
@@ -1012,6 +1019,14 @@ def stringAempleado(matriz):
     for i in range(len(matriz)):
         lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
     return lista_empleados
+
+def calcular_porc_hab_ocupadas(fecha,lista):
+    cantreservas = 0
+    for i in range(len(lista)):
+        if (lista[i][4]>fecha and lista[i][5]<fecha):
+            cantreservas += 1
+    porcentaje = cantreservas/12 * 100
+    return porcentaje
 
 # Menu principal
 def menuPOO():
