@@ -43,6 +43,17 @@ def csvtomatriz(archivo):
     except IOError:
         print("No se encontró el archivo.")
 
+def csvtodicc(archivo):
+    try:
+        with open(archivo) as csvfile:
+            reader = csv.reader(csvfile, delimiter=';')
+            dicc = {}
+            for row in reader:
+                dicc[row[0]] = row[1]
+        return dicc
+    except IOError:
+        print("No se encontró el archivo.")
+
 def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una reserva "R" o un nuevo empleado "E", "Con" consumos, "Cl" cliente y "IE" ingresos y egresos
     if tipo=="R":
         with open(archivo, 'w', newline='') as csvfile:

@@ -1,6 +1,5 @@
 import datetime as dt
-from funciones import validar_dni, validar_mail, validar_fec, validar_respuesta_menu, csvtomatriz, matriztocsv, strtodatime
-#from menus import menu_datos_personales, menu_reserva_actual, menu_gerente, menu_reservas, menu_consumos, menu_empleado, menu_administracion_personal
+from funciones import validar_dni, validar_mail, validar_fec, validar_respuesta_menu, csvtomatriz, matriztocsv, strtodatime, csvtodicc
 
 class Persona:
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):
@@ -760,7 +759,8 @@ class Cliente(Persona):
         
         consumo = Consumo(None, self.DNI, dt.datetime.today().strftime("%d/%m/%Y"), None, None, None)
 
-        consumiciones = csvtomatriz("consumiciones.csv")
+        consumiciones = {}
+        consumiciones = csvtodicc("consumiciones.csv")
 
         print("¿Qué desea consumir?")
         print("1. Bebida")
@@ -771,26 +771,17 @@ class Cliente(Persona):
         
         if rta == 1:
             consumo.item = "bebida"
-            for i in consumiciones:
-                if i[0] == "bebida":
-                    precio = int(i[1])
         elif rta == 2:
             consumo.item = "comida"
-            for i in consumiciones:
-                if i[0] == "comida":
-                    precio = int(i[1])
         elif rta == 3:
             consumo.item = "postre"
-            for i in consumiciones:
-                if i[0] == "postre":
-                    precio = int(i[1])
         
         if rta < 4:
             cantidad = input("Ingrese la cantidad: ")
             while not cantidad.isdigit():
                 cantidad = input("Cantidad no válida, ingrese otra: ")
             consumo.cantidad = cantidad
-            consumo.precio = str(precio * int(cantidad))
+            consumo.precio = str(int(consumiciones[consumo.item]) * int(cantidad))
 
             print ("¿Desea confirmar el consumo?")
             print (f"Precio: ${consumo.precio}")
