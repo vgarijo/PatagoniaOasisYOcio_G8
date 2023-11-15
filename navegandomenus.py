@@ -827,19 +827,51 @@ class Empleado(Persona):
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
 
-    def ingreso_egreso(self,tipo): # "I" ingreso y "E" egreso
-        matriz_ingresos_egresos=csvtomatriz("ingresos_egresos.csv")
-        if tipo=="I":
-            matriz_ingresos_egresos.append([(len(matriz_ingresos_egresos)+1),self.DNI,dt.datetime.today().strftime("%d/%m/%Y"),dt.datetime.now().strftime("%H:%M"),None])
-            matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
-        elif tipo=="E": 
-            for i in range(len(matriz_ingresos_egresos)):
-                if self.DNI==matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][1]:
-                    hora_egreso=validar_hora_egreso(matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][3])
-                    matriz_ingresos_egresos[(len(matriz_ingresos_egresos)-1)-i][4]=hora_egreso
-                    matriztocsv("ingresos_egresos.csv",matriz_ingresos_egresos,"IE")
-                    break
+    def ingreso(self):
 
+        ingresos = csvtomatriz("ingresos_egresos.csv")
+        
+        # Me fijo si ingresó hoy
+        ingreso = False
+        for i in range(len(ingresos)):
+            if ingresos[i][1] == self.DNI and ingresos[i][2] == dt.datetime.today().strftime("%d/%m/%Y"):
+                print("Ya ingresó hoy.")
+                print("")
+                ingreso = True
+                menu_empleado(self)
+        
+        # Si no ingresó, lo agrego
+        if not ingreso:
+            ingresos.append([str(int(ingresos[-1][0]) + 1), self.DNI, dt.datetime.today().strftime("%d/%m/%Y"), dt.datetime.now().strftime("%H:%M"), "No"])
+            matriztocsv("ingresos_egresos.csv", ingresos,"IE")
+            print("Ingreso registrado.")
+            print("")
+            menu_empleado(self)
+
+    def egreso(self):
+
+        egresos = csvtomatriz("ingresos_egresos.csv")
+
+        # Me fijo si ingresó hoy
+        ingreso = False
+        for i in range(len(egresos)):
+            if egresos[i][1] == self.DNI and egresos[i][2] == dt.datetime.today().strftime("%d/%m/%Y"):
+                if egresos[i][4] != "No":
+                    print("Ya egresó hoy.")
+                    print("")
+                    ingreso = True
+                    menu_empleado(self)
+                else:
+                    egresos[i][4] = dt.datetime.now().strftime("%H:%M")
+                    matriztocsv("ingresos_egresos.csv", egresos,"IE")
+                    print("Egreso registrado.")
+                    print("")
+                    menu_empleado(self)
+        
+        # Si no ingresó, no puede efectuar el egreso
+        if not ingreso:
+            print("No puede registrar un egreso sin haber ingresado.")
+            print("")
 
 
     def modificar_datos_personales(self):
@@ -1134,8 +1166,6 @@ class Gerente(Empleado):
             print(f"La recaudación de hoy es de ${recaudacion}.")
         else:
             print(f"La recaudación del {fecha} es de ${recaudacion}.")
-
-
 
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout,precio):
@@ -1797,13 +1827,9 @@ def menu_empleado(empleado):
     print("5. Salir")
     rta = validar_respuesta_menu(5)
     if rta == 1:
-        empleado.ingreso_egreso("I")
-        print("Ingreso efectuado")
-        menu_empleado(empleado)
+        empleado.ingreso()
     if rta == 2:
-        empleado.ingreso_egreso("E")
-        print("Egreso efectuado")
-        menu_empleado(empleado)
+        empleado.egreso()
     if rta == 3:
         menu_datos_personales(empleado)
     if rta == 4:
