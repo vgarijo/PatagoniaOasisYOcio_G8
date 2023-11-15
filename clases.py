@@ -1,7 +1,6 @@
 import datetime as dt
-from clases import *
-from funciones import *
-from menus import *
+from funciones import validar_dni, validar_mail, validar_fec, validar_respuesta_menu, csvtomatriz, matriztocsv, strtodatime
+from menus import menu_datos_personales, menu_reserva_actual, menu_gerente, menu_reservas, menu_consumos, menu_empleado, menu_administracion_personal
 
 class Persona:
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):

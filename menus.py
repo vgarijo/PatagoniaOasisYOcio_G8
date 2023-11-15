@@ -1,6 +1,6 @@
 import datetime as dt
-from clases import *
-from funciones import *
+from clases import Cliente, Empleado, Gerente
+from funciones import validar_dni, validar_mail, validar_fec, validar_respuesta_menu, csvtomatriz, matriztocsv, strtodatime, stringAempleado
 
 # Menu principal
 def menuPOO():

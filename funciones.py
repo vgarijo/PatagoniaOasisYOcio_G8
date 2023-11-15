@@ -1,9 +1,6 @@
-
+from clases import Empleado, Lista_Enlazada
 import csv
-import numpy as np
-import random as rd
 import datetime as dt
-from clases import *
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
