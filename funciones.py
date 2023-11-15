@@ -1,6 +1,6 @@
-from clases import Empleado, Lista_Enlazada
 import csv
 import datetime as dt
+from clases import Empleado, Lista_Enlazada
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
@@ -22,13 +22,6 @@ def validar_fec(mensaje):
     while not "/" in fecha or len(fecha) != 10:
         fecha = input("Fecha no válida, ingrese otra: ")
     return fecha
-
-def validar_hora_egreso(hora_ingreso):
-    if hora_ingreso==None:
-        hora_egreso=None
-    else:
-        hora_egreso=dt.datetime.now().strftime("%H:%M")
-    return hora_egreso
         
 def validar_respuesta_menu(rta):
     rtas=range(1, rta+1)
@@ -80,6 +73,12 @@ def matriztocsv(archivo, matriz, tipo): #tipo se refiere a si quiero agregar una
         with open(archivo, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerow(["Id_Ingreso", "DNI del empleado", "Dia", "Hora_Entrada", "Hora_Salida"])
+            for i in range(len(matriz)):
+                writer.writerow(matriz[i])
+    elif tipo =="T":
+        with open(archivo, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            writer.writerow(["id_tarea", "DNI_empleado","Tarea", "Fecha"])
             for i in range(len(matriz)):
                 writer.writerow(matriz[i])
 

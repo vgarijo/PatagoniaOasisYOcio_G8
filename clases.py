@@ -823,9 +823,22 @@ class Empleado(Persona):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac)
         self.area = area
         self.activo = activo
-
         
+        self.tareas_prioritarias = Pila()
+        matriz=csvtomatriz("tareas_prioritarias.csv")
 
+        # La recorro al revés
+        for i in range(len(matriz)-1, -1, -1):
+            if matriz[i][1] == self.DNI:
+                self.tareas_prioritarias.apilar(TareaPrioritaria(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
+        
+        self.tareas_normales = Cola()
+        matriz=csvtomatriz("tareas_normales.csv")
+
+        for i in range(len(matriz)):
+            if matriz[i][1] == self.DNI:
+                self.tareas_normales.encolar(TareaNormal(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
+        
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
 
@@ -875,7 +888,6 @@ class Empleado(Persona):
             print("No puede registrar un egreso sin haber ingresado.")
             print("")
 
-
     def modificar_datos_personales(self):
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
@@ -923,6 +935,36 @@ class Empleado(Persona):
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
             exit()
+
+    def tarea_prioritaria(self):
+        print(f"Confirmar que realizó la tarea prioritaria:{self.tareas_prioritarias.ver_tope().descripcion}")
+        print("1. Sí")
+        print("2. No")
+        rta = validar_respuesta_menu(2)
+        if rta == 1:
+            matriz=csvtomatriz("tareas_prioritarias.csv")
+            for i in range(len(matriz)):
+                if self.tareas_prioritarias.ver_tope().numero == matriz[i][0]:
+                    matriz.pop(i)
+                    break
+            self.tareas_prioritarias.desapilar()
+            matriztocsv("tareas_prioritarias.csv", matriz,"T")
+            print("Tarea confirmada.")
+    
+    def tarea_normal(self):
+        print(f"Confirmar que realizó la tarea normal:{self.tareas_normales.ver_frente().descripcion}")
+        print("1. Sí")
+        print("2. No")
+        rta = validar_respuesta_menu(2)
+        if rta == 1:
+            matriz=csvtomatriz("tareas_normales.csv")
+            for i in range(len(matriz)):
+                if self.tareas_normales.ver_frente().numero == matriz[i][0]:
+                    matriz.pop(i)
+                    break
+            self.tareas_normales.desencolar()
+            matriztocsv("tareas_normales.csv", matriz,"T")
+            print("Tarea confirmada.")
 
 class Gerente(Empleado):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
@@ -1169,6 +1211,48 @@ class Gerente(Empleado):
         else:
             print(f"La recaudación del {fecha} es de ${recaudacion}.")
 
+    def agregar_tareas(self):
+        empleados = csvtomatriz("empleados.csv")
+        
+        print("Ingrese el DNI del empleado al que desea asignarle una tarea: ")
+        dni = validar_dni()
+
+        empleado = None
+        for i in range(len(empleados)):
+            if dni == empleados[i][2]:
+                empleado = Empleado(empleados[i][0], empleados[i][1], empleados[i][2], empleados[i][3], empleados[i][4], empleados[i][5], empleados[i][6], empleados[i][7])
+                print("Empleado encontrado.")
+        
+        if empleado == None:
+            print("No se encontró al empleado.")
+            print("")
+            menu_gerente(self)
+        else:
+            tareas == None
+            print("Ingrese el tipo de tarea:")
+            print("1. Prioritaria")
+            print("2. Normal")
+            print("3. Volver")
+            print("4. Salir")
+            rta = validar_respuesta_menu(4)
+            if rta == 1:
+                tareas = csvtomatriz("tareas_prioritarias.csv")
+            elif rta == 2:
+                tareas = csvtomatriz("tareas_normales.csv")
+            elif rta == 3:
+                menu_gerente(self)
+            else:
+                print("Gracias por utilizar nuestros servicios. Hasta pronto.")
+                exit()
+        
+        if tareas != None:
+            descripcion = input("Ingrese la descripción de la tarea: ")
+            tareas.append([str(int(tareas[-1][0]) + 1), empleado.DNI, descripcion, dt.datetime.today().strftime("%d/%m/%Y")])
+            if rta == 1:
+                matriztocsv("tareas_prioritarias.csv", tareas,"TP")
+            else:
+                matriztocsv("tareas_normales.csv", tareas,"T")
+
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout,precio):
         self.dni_cliente = dni_cliente
@@ -1198,6 +1282,59 @@ class Consumo():
     
     def __str__(self) -> str:
         return f"Numero de pedido: {self.numero_pedido}\nCliente: {self.cliente}\nFecha: {self.fecha}\nItem: {self.item}\nCantidad: {self.cantidad}\nPrecio: ${self.precio}"
+
+class TareaPrioritaria():
+    def __init__(self, nro_tarea, empleado, tarea, fecha):
+        self.nro_tarea = nro_tarea
+        self.empleado = empleado
+        self.tarea = tarea
+        self.fecha = fecha
+
+    def __str__(self) -> str:
+        return f"Numero de tarea: {self.nro_tarea}\nEmpleado: {self.empleado}\nDescripción: {self.descripcion}\nFecha: {self.fecha}"
+
+class TareaNormal():
+    def __init__(self, nro_tarea, empleado, tarea, fecha):
+        self.nro_tarea = nro_tarea
+        self.empleado = empleado
+        self.tarea = tarea
+        self.fecha = fecha
+
+    def __str__(self) -> str:
+        return f"Numero de tarea: {self.nro_tarea}\nEmpleado: {self.empleado}\nDescripción: {self.descripcion}\nFecha: {self.fecha}"
+
+class Pila(): # Pila
+    def __init__(self): # Constructor de la clase
+        self.items=[] # Crea una lista vacía
+    
+    def apilar(self,x): # Agrega un elemento a la pila
+        self.items.append(x) # Agrega un elemento al final de la lista
+    
+    def desapilar(self): # Elimina el último elemento de la pila
+        if self.esta_vacia(): # Si la pila está vacía
+            raise IndexError("La pila está vacía") # Lanza una excepción
+        return self.items.pop() # Elimina el último elemento de la lista
+
+    def esta_vacia(self): # Devuelve True si la pila está vacía, False si no
+        return len(self.items)==0
+    
+    def ver_tope(self): # Devuelve el último elemento de la pila
+        return self.items[-1]
+
+class Cola(): # Cola
+    def __init__(self): # Constructor de la clase
+        self.items=[] # Crea una lista vacía
+
+    def encolar(self,x): # Agrega un elemento a la cola
+        self.items.append(x) # Agrega un elemento al final de la lista
+
+    def desencolar(self): # Elimina el primer elemento de la cola
+        if self.esta_vacia(): # Si la cola está vacía
+            raise IndexError("La cola está vacía") # Lanza una excepción
+        return self.items.pop(0) # Elimina el primer elemento de la lista
+
+    def esta_vacia(self): # Devuelve True si la cola está vacía, False si no
+        return len(self.items)==0    
 
 class Nodo(): # Nodo de la lista enlazada
     def __init__(self,dato=None,prox=None): # Constructor de la clase

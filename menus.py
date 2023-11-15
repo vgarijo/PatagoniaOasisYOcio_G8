@@ -327,8 +327,10 @@ def menu_empleado(empleado):
     print("1. Ingreso")
     print("2. Egreso")
     print("3. Datos Personales")
-    print("4. Volver atras")
-    print("5. Salir")
+    print("4. Realizar tarea prioritaria")
+    print("5. Realizar tarea normal")
+    print("6. Volver atras")
+    print("7. Salir")
     rta = validar_respuesta_menu(5)
     if rta == 1:
         empleado.ingreso()
@@ -337,6 +339,10 @@ def menu_empleado(empleado):
     if rta == 3:
         menu_datos_personales(empleado)
     if rta == 4:
+        empleado.tarea_prioritaria()
+    if rta == 5:
+        empleado.tarea_normal()
+    if rta == 6:
         menuPOO()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -352,9 +358,10 @@ def menu_gerente(gerente):
     print("4. Administración de personal")
     print("5. Estadísticas")
     print("6. Actualizar tipo de clientes")
-    print("7. Volver atras")
-    print("8. Salir")
-    rta = validar_respuesta_menu(8)
+    print("7. Agregar tareas a empleados")
+    print("8. Volver atras")
+    print("9. Salir")
+    rta = validar_respuesta_menu(9)
     if rta == 1:
         gerente.ingreso_egreso("I")
         print("Ingreso efectuado")
@@ -372,6 +379,8 @@ def menu_gerente(gerente):
     elif rta == 6:
         gerente.actualizar_tipo_clientes()
     elif rta == 7:
+        gerente.agregar_tareas()
+    elif rta == 8:
         menuPOO()
     else:
         print("Gracias por utilizar nuestros servicios. Hasta pronto.")
