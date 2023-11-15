@@ -327,11 +327,11 @@ def menu_empleado(empleado):
     print("1. Ingreso")
     print("2. Egreso")
     print("3. Datos Personales")
-    print("4. Realizar tarea prioritaria")
-    print("5. Realizar tarea normal")
+    print("4. Realizar tarea prioritaria:", empleado.tareas_prioritarias.ver_tope().tarea)
+    print("5. Realizar tarea normal:", empleado.tareas_normales.ver_frente().tarea)
     print("6. Volver atras")
     print("7. Salir")
-    rta = validar_respuesta_menu(5)
+    rta = validar_respuesta_menu(7)
     if rta == 1:
         empleado.ingreso()
     if rta == 2:
@@ -340,8 +340,10 @@ def menu_empleado(empleado):
         menu_datos_personales(empleado)
     if rta == 4:
         empleado.tarea_prioritaria()
+        menu_empleado(empleado)
     if rta == 5:
         empleado.tarea_normal()
+        menu_empleado(empleado)
     if rta == 6:
         menuPOO()
     else:

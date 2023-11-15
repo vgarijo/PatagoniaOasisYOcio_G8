@@ -1,7 +1,7 @@
-id_tarea;DNI_empleado;tarea;fecha
+id_tarea;DNI_empleado;Tarea;Fecha
 1;30698215;Cambio de lamparitas suit2;2019-01-01
 2;30698215;Arreglo tomacorrientes fam1;2019-01-02
 3;30698215;Arreglo de puerta suit1;2019-01-03
-4;45789456;Reunión con clientes;2019-01-01
-5;45789456;Reunión con gerentes;2019-01-02
+5;45789456;Reunion con gerentes;2019-01-02
 6;45789456;Contestar mensajes Instagram;2019-01-03
+7;45789456;Llamar gerente sucursal NY;15/11/2023

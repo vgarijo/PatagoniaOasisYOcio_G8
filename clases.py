@@ -1,6 +1,6 @@
 import datetime as dt
 from funciones import validar_dni, validar_mail, validar_fec, validar_respuesta_menu, csvtomatriz, matriztocsv, strtodatime
-from menus import menu_datos_personales, menu_reserva_actual, menu_gerente, menu_reservas, menu_consumos, menu_empleado, menu_administracion_personal
+#from menus import menu_datos_personales, menu_reserva_actual, menu_gerente, menu_reservas, menu_consumos, menu_empleado, menu_administracion_personal
 
 class Persona:
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac):
@@ -90,7 +90,8 @@ class Cliente(Persona):
             print("Modificación realizada.")
             print("")
             self.modificar_datos_personales()
-        elif rta == 6: 
+        elif rta == 6:
+            from menus import menu_datos_personales
             menu_datos_personales(self)
         else:
             print("Gracias por utilizar nuestros servicios. Hasta pronto.")
@@ -123,6 +124,7 @@ class Cliente(Persona):
             elif rta == 4: #modificar fecha de salida
                 self.modificar_egreso(reserva,costo_actual)
             elif rta == 5:
+                from menus import menu_reserva_actual
                 menu_reserva_actual(self, reserva)
         
     def elegir_habitacion(self, reserva, costo_actual):
@@ -525,7 +527,7 @@ class Cliente(Persona):
             print("")
 
     def checkin(self, reserva):
-
+        from menus import menu_reserva_actual
         if reserva.checkin == "si":
             print("Ya realizó el check in")
             print("")
@@ -557,6 +559,7 @@ class Cliente(Persona):
                 menu_reserva_actual(self, reserva)
 
     def checkout(self, reserva):
+        from menus import menu_reserva_actual
         if reserva.checkout == "si":
             print("Ya realizó el check out")
             print("")
@@ -590,6 +593,7 @@ class Cliente(Persona):
                 menu_reserva_actual(self, reserva)
 
     def cancelar_reserva(self, reserva):
+        from menus import menu_reservas, menu_reserva_actual
         print("¿Está seguro que desea cancelar la reserva?")
         print("1. Si")
         print("2. No")
@@ -624,7 +628,8 @@ class Cliente(Persona):
             menu_reserva_actual(self, reserva)
         
     def nueva_reserva(self):
-        
+        from menus import menu_reservas
+
         print("Iniciando una nueva reserva...")
         print("")
         
@@ -751,6 +756,7 @@ class Cliente(Persona):
         menu_reservas(self) 
 
     def consumir(self):
+        from menus import menu_consumos
         
         consumo = Consumo(None, self.DNI, dt.datetime.today().strftime("%d/%m/%Y"), None, None, None)
 
@@ -827,22 +833,24 @@ class Empleado(Persona):
         self.tareas_prioritarias = Pila()
         matriz=csvtomatriz("tareas_prioritarias.csv")
 
-        # La recorro al revés
-        for i in range(len(matriz)-1, -1, -1):
+        # La recorro normal
+        for i in range(len(matriz)):
             if matriz[i][1] == self.DNI:
-                self.tareas_prioritarias.apilar(TareaPrioritaria(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
+                self.tareas_prioritarias.apilar(Tarea(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
         
         self.tareas_normales = Cola()
         matriz=csvtomatriz("tareas_normales.csv")
 
+        # La recorro normal
         for i in range(len(matriz)):
             if matriz[i][1] == self.DNI:
-                self.tareas_normales.encolar(TareaNormal(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
+                self.tareas_normales.encolar(Tarea(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3]))
         
     def __str__(self):
         return f"Nombre: {self.nombre}\nApellido: {self.apellido}\nDNI: {self.DNI}\nMail: {self.mail}\nFecha de nacimiento: {self.fec_nac}\nArea: {self.area}\nStatus: {self.activo}"
 
     def ingreso(self):
+        from menus import menu_empleado
 
         ingresos = csvtomatriz("ingresos_egresos.csv")
         
@@ -864,6 +872,7 @@ class Empleado(Persona):
             menu_empleado(self)
 
     def egreso(self):
+        from menus import menu_empleado
 
         egresos = csvtomatriz("ingresos_egresos.csv")
 
@@ -889,6 +898,7 @@ class Empleado(Persona):
             print("")
 
     def modificar_datos_personales(self):
+        from menus import menu_datos_personales
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
@@ -937,40 +947,45 @@ class Empleado(Persona):
             exit()
 
     def tarea_prioritaria(self):
-        print(f"Confirmar que realizó la tarea prioritaria:{self.tareas_prioritarias.ver_tope().descripcion}")
+        print(f"Confirmar que realizó la tarea prioritaria: {self.tareas_prioritarias.ver_tope().tarea}")
         print("1. Sí")
         print("2. No")
         rta = validar_respuesta_menu(2)
         if rta == 1:
             matriz=csvtomatriz("tareas_prioritarias.csv")
             for i in range(len(matriz)):
-                if self.tareas_prioritarias.ver_tope().numero == matriz[i][0]:
+                if self.tareas_prioritarias.ver_tope().nro_tarea == matriz[i][0]:
                     matriz.pop(i)
                     break
             self.tareas_prioritarias.desapilar()
             matriztocsv("tareas_prioritarias.csv", matriz,"T")
             print("Tarea confirmada.")
+            print("Tareas prioritarias pendientes:")
+            print(self.tareas_prioritarias)
     
     def tarea_normal(self):
-        print(f"Confirmar que realizó la tarea normal:{self.tareas_normales.ver_frente().descripcion}")
+        print(f"Confirmar que realizó la tarea normal: {self.tareas_normales.ver_frente().tarea}")
         print("1. Sí")
         print("2. No")
         rta = validar_respuesta_menu(2)
         if rta == 1:
             matriz=csvtomatriz("tareas_normales.csv")
             for i in range(len(matriz)):
-                if self.tareas_normales.ver_frente().numero == matriz[i][0]:
+                if self.tareas_normales.ver_frente().nro_tarea == matriz[i][0]:
                     matriz.pop(i)
                     break
             self.tareas_normales.desencolar()
             matriztocsv("tareas_normales.csv", matriz,"T")
             print("Tarea confirmada.")
+            print("Tareas normales pendientes:")
+            print(self.tareas_normales)
 
 class Gerente(Empleado):
     def __init__(self, nombre, apellido, DNI, mail, password, fec_nac, area, activo):
         super().__init__(nombre, apellido, DNI, mail, password, fec_nac, area, activo)
     
     def modificar_datos_personales(self):
+        from menus import menu_gerente
         print("¿Qué dato desea modificar?")
         print("1. Nombre")
         print("2. Apellido")
@@ -1033,6 +1048,7 @@ class Gerente(Empleado):
             exit()
     
     def actualizar_tipo_clientes(self):
+        from menus import menu_gerente
         # El tipo de cliente varía según sus gastos totales
         # De 0 a 5000: Basico
         # De 5000 a 10000: Regular
@@ -1073,6 +1089,7 @@ class Gerente(Empleado):
         matriztocsv("empleados.csv",matriz_empleados,"E")
 
     def modificarEmpleado(self,empleado):
+        from menus import menu_administracion_personal
         print("¿Qué dato desea modificar?")
         print(f"1. Nombre: {empleado.nombre}")
         print(f"2. Apellido: {empleado.apellido}")
@@ -1212,6 +1229,7 @@ class Gerente(Empleado):
             print(f"La recaudación del {fecha} es de ${recaudacion}.")
 
     def agregar_tareas(self):
+        from menus import menu_gerente
         empleados = csvtomatriz("empleados.csv")
         
         print("Ingrese el DNI del empleado al que desea asignarle una tarea: ")
@@ -1221,14 +1239,15 @@ class Gerente(Empleado):
         for i in range(len(empleados)):
             if dni == empleados[i][2]:
                 empleado = Empleado(empleados[i][0], empleados[i][1], empleados[i][2], empleados[i][3], empleados[i][4], empleados[i][5], empleados[i][6], empleados[i][7])
-                print("Empleado encontrado.")
+                print(f"Empleado encontrado: {empleado.nombre} {empleado.apellido}")
+                print("")
         
         if empleado == None:
             print("No se encontró al empleado.")
             print("")
             menu_gerente(self)
         else:
-            tareas == None
+            tareas = None
             print("Ingrese el tipo de tarea:")
             print("1. Prioritaria")
             print("2. Normal")
@@ -1249,9 +1268,12 @@ class Gerente(Empleado):
             descripcion = input("Ingrese la descripción de la tarea: ")
             tareas.append([str(int(tareas[-1][0]) + 1), empleado.DNI, descripcion, dt.datetime.today().strftime("%d/%m/%Y")])
             if rta == 1:
-                matriztocsv("tareas_prioritarias.csv", tareas,"TP")
+                matriztocsv("tareas_prioritarias.csv", tareas,"T")
             else:
                 matriztocsv("tareas_normales.csv", tareas,"T")
+            print("Tarea asignada.")
+            print("")
+            menu_gerente(self)
 
 class Reserva():
     def __init__(self, numero_res, dni_cliente, habitacion, tipo, fecha_ing, fecha_egr, cant_personas,checkin,checkout,horario_checkin,horario_checkout,precio):
@@ -1283,7 +1305,7 @@ class Consumo():
     def __str__(self) -> str:
         return f"Numero de pedido: {self.numero_pedido}\nCliente: {self.cliente}\nFecha: {self.fecha}\nItem: {self.item}\nCantidad: {self.cantidad}\nPrecio: ${self.precio}"
 
-class TareaPrioritaria():
+class Tarea():
     def __init__(self, nro_tarea, empleado, tarea, fecha):
         self.nro_tarea = nro_tarea
         self.empleado = empleado
@@ -1291,17 +1313,7 @@ class TareaPrioritaria():
         self.fecha = fecha
 
     def __str__(self) -> str:
-        return f"Numero de tarea: {self.nro_tarea}\nEmpleado: {self.empleado}\nDescripción: {self.descripcion}\nFecha: {self.fecha}"
-
-class TareaNormal():
-    def __init__(self, nro_tarea, empleado, tarea, fecha):
-        self.nro_tarea = nro_tarea
-        self.empleado = empleado
-        self.tarea = tarea
-        self.fecha = fecha
-
-    def __str__(self) -> str:
-        return f"Numero de tarea: {self.nro_tarea}\nEmpleado: {self.empleado}\nDescripción: {self.descripcion}\nFecha: {self.fecha}"
+        return f"\nNumero de tarea: {self.nro_tarea}\nEmpleado: {self.empleado}\nDescripción: {self.tarea}\nFecha: {self.fecha}"
 
 class Pila(): # Pila
     def __init__(self): # Constructor de la clase
@@ -1321,6 +1333,12 @@ class Pila(): # Pila
     def ver_tope(self): # Devuelve el último elemento de la pila
         return self.items[-1]
 
+    def __str__(self) -> str:
+        cadena = ""
+        for i in range(len(self.items)-1, -1, -1):
+            cadena += str(self.items[i]) + "\n"
+        return cadena
+
 class Cola(): # Cola
     def __init__(self): # Constructor de la clase
         self.items=[] # Crea una lista vacía
@@ -1334,7 +1352,16 @@ class Cola(): # Cola
         return self.items.pop(0) # Elimina el primer elemento de la lista
 
     def esta_vacia(self): # Devuelve True si la cola está vacía, False si no
-        return len(self.items)==0    
+        return len(self.items)==0 
+    
+    def ver_frente(self): # Devuelve el primer elemento de la cola
+        return self.items[0]
+
+    def __str__(self) -> str:
+        cadena = ""
+        for i in range(len(self.items)):
+            cadena += str(self.items[i]) + "\n"
+        return cadena
 
 class Nodo(): # Nodo de la lista enlazada
     def __init__(self,dato=None,prox=None): # Constructor de la clase

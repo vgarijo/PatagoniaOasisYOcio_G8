@@ -1,6 +1,5 @@
 import csv
 import datetime as dt
-from clases import Empleado, Lista_Enlazada
 
 def validar_dni():
     # El DNI es un número de 7 u 8 cifras
@@ -88,6 +87,8 @@ def strtodatime(fecha):
     return fecha
 
 def stringAempleado(matriz):
+    from clases import Empleado
+    from clases import Lista_Enlazada
     lista_empleados=Lista_Enlazada()
     for i in range(len(matriz)):
         lista_empleados.append(Empleado(matriz[i][0],matriz[i][1],matriz[i][2],matriz[i][3],matriz[i][4],matriz[i][5],matriz[i][6],matriz[i][7]))
